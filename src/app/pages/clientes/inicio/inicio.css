@@ -1,0 +1,2 @@
+.transition-hover { transition: transform 0.2s ease-in-out; cursor: pointer; }
+.transition-hover:hover { transform: translateY(-5px); }

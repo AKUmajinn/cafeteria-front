@@ -1,1 +1,20 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+:root {
+  --cafe-primario: #5c3d2e;
+  --cafe-secundario: #d4b895;
+  --fondo-crema: #fdfbf7;
+  --texto-oscuro: #2c1e16;
+}
+
+body {
+  background-color: var(--fondo-crema);
+  color: var(--texto-oscuro);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.bg-cafe { background-color: var(--cafe-primario) !important; color: white; }
+.text-cafe { color: var(--cafe-primario) !important; }
+.btn-cafe { background-color: var(--cafe-primario); color: white; border: none; }
+.btn-cafe:hover { background-color: #432a1f; color: white; }

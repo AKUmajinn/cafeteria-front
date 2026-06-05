@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand-lg bg-white shadow-sm py-3 border-bottom">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand fw-bold text-cafe" href="/empleados/pos">
+      <i class="bi bi-shop me-2"></i>Admin
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navEmpleados">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-center" id="navEmpleados">
+      <ul class="navbar-nav gap-4">
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" routerLink="/empleados/pos" routerLinkActive="border-bottom border-2 border-dark text-dark">PEDIDOS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" routerLink="/empleados/catalogo" routerLinkActive="border-bottom border-2 border-dark text-dark">CATÁLOGO</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" routerLink="/empleados/dashboard" routerLinkActive="border-bottom border-2 border-dark text-dark">TURNO</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-uppercase fw-semibold" routerLink="/empleados/historial" routerLinkActive="border-bottom border-2 border-dark text-dark">HISTORIAL</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="container-fluid py-4 px-4 h-100" style="background-color: var(--fondo-crema);">
+  <router-outlet></router-outlet>
+</main>

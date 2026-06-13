@@ -13,7 +13,7 @@
           <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
             <i class="bi bi-cup-hot text-cafe fs-3"></i>
           </div>
-          <div class="flex-grow-1">
+          <div class="grow">
             <h6 class="fw-bold mb-1">Latte</h6>
             <p class="text-cafe fw-bold mb-2">$4.50</p>
             <div class="d-flex gap-2">
@@ -29,7 +29,7 @@
           <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
             <i class="bi bi-bag-heart text-cafe fs-3"></i>
           </div>
-          <div class="flex-grow-1">
+          <div class="grow">
             <h6 class="fw-bold mb-1">Muffin</h6>
             <p class="text-cafe fw-bold mb-2">$3.00</p>
             <div class="d-flex gap-2">
@@ -45,7 +45,7 @@
           <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
             <i class="bi bi-cake2 text-cafe fs-3"></i>
           </div>
-          <div class="flex-grow-1">
+          <div class="grow">
             <h6 class="fw-bold mb-1">Sándwich</h6>
             <p class="text-cafe fw-bold mb-2">$5.50</p>
             <div class="d-flex gap-2">
@@ -56,24 +56,24 @@
         </div>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-md-6" *ngIf="productoTest">
         <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center">
           <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
             <i class="bi bi-cup text-cafe fs-3"></i>
           </div>
-          <div class="flex-grow-1">
-            <h6 class="fw-bold mb-1">Cappuccino</h6>
-            <p class="text-cafe fw-bold mb-2">$4.80</p>
+          <div class="grow">
+            <h6 class="fw-bold mb-1">{{ productoTest.nombre }}</h6>
+            <p class="text-cafe fw-bold mb-2">S/ {{ productoTest.precioBase | number:'1.2-2' }}</p>
             <div class="d-flex gap-2">
               <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
-              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="bi bi-trash"></i> Eliminar</button>
+              <button (click)="eliminarProducto(productoTest.id)" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                <i class="bi bi-trash"></i> Eliminar
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <nav class="d-flex justify-content-center">
+    </div> <nav class="d-flex justify-content-center">
       <ul class="pagination pagination-sm shadow-sm">
         <li class="page-item"><a class="page-link text-dark" href="javascript:void(0)"><i class="bi bi-chevron-left"></i></a></li>
         <li class="page-item active"><a class="page-link bg-cafe border-0" href="javascript:void(0)">1</a></li>
@@ -90,9 +90,10 @@
     <div class="mb-4">
       <label class="form-label fw-semibold small">Categoría</label>
       <select class="form-select bg-white shadow-sm border-0 py-2">
-        <option>Todas</option>
-        <option>Café</option>
-        <option>Snacks</option>
+        <option value="">Todas</option>
+        <option *ngFor="let cat of categorias" [value]="cat.id">
+          {{ cat.nombre }}
+        </option>
       </select>
     </div>
 

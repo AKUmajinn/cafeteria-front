@@ -1,27 +1,67 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CatalogoService, Categoria } from '../../../services/catalogo.service';
+import { Component, computed, inject, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { CarritoService } from '../../../core/services/carrito.service';
+import { PedidoService } from '../../../core/services/pedido.service';
+import { Producto } from '../../../core/models/catalogo.models';
+import { PRODUCTOS_MOCK } from '../../../core/data/productos-mock';
 
 @Component({
   selector: 'app-pos',
-  standalone: true,
-  imports: [CommonModule], // <-- Permite usar *ngFor en pos.html
+  imports: [DecimalPipe],
   templateUrl: './pos.html',
   styleUrl: './pos.css'
 })
-export class Pos implements OnInit {
-  private catalogoService = inject(CatalogoService);
-  private cdr = inject(ChangeDetectorRef);
+export class Pos {
+  readonly carrito = inject(CarritoService);
+  private readonly pedidoService = inject(PedidoService);
 
-  categorias: Categoria[] = [];
+  // TEMPORAL: productos desde el mock. Cuando exista GET /productos,
+  // reemplazar por una llamada a CatalogoService.listarProductos().
+  readonly productos = signal<Producto[]>(PRODUCTOS_MOCK);
 
-  ngOnInit(): void {
-    this.catalogoService.getCategorias().subscribe({
-      next: (data) => {
-        this.categorias = data;
-        this.cdr.detectChanges();
+  readonly procesando = signal(false);
+  readonly mensaje = signal<string | null>(null);
+  readonly mensajeEsError = signal(false);
+
+  readonly carritoVacio = computed(() => this.carrito.items().length === 0);
+
+  // Cajero del turno. En un sistema con login saldría de la sesión;
+  // por ahora lo dejamos fijo para probar.
+  private readonly cajero = 'Marco';
+
+  agregar(producto: Producto): void {
+    this.carrito.agregar(producto);
+  }
+
+  procesarPedido(): void {
+    if (this.carritoVacio()) {
+      this.mostrarMensaje('El ticket está vacío.', true);
+      return;
+    }
+    this.procesando.set(true);
+    this.mensaje.set(null);
+
+    const request = this.carrito.toPedidoRequest(this.cajero, 'LOCAL');
+    this.pedidoService.crearPedido(request).subscribe({
+      next: (pedido) => {
+        this.procesando.set(false);
+        this.carrito.vaciar();
+        this.mostrarMensaje(
+          `Pedido #${pedido.id} creado. Total: $${pedido.total.toFixed(2)}`,
+          false
+        );
       },
-      error: (err) => console.error('Error al cargar categorías en el POS:', err)
+      error: (err) => {
+        this.procesando.set(false);
+        // Errores típicos del backend: sin turno activo, precio que no coincide.
+        const txt = err?.error?.mensaje ?? 'No se pudo procesar el pedido. ¿Hay un turno abierto?';
+        this.mostrarMensaje(txt, true);
+      },
     });
+  }
+
+  private mostrarMensaje(texto: string, esError: boolean): void {
+    this.mensaje.set(texto);
+    this.mensajeEsError.set(esError);
   }
 }

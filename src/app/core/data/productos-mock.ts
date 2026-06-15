@@ -1,0 +1,68 @@
+// productos-mock.ts
+// Productos de prueba para el FRONT, alineados 1:1 con seed-catalogo.sql.
+//
+// Úsalo temporalmente mientras NO exista GET /api/catalogo/productos.
+// Sirve para llenar el carrito y probar el flujo de pedidos de punta a punta.
+//
+// ⚠️ CRÍTICO: el `id` y el `precioBase` de cada producto deben coincidir
+// EXACTAMENTE con los de la BD. crearPedido() valida el precio contra el
+// catálogo; si difieren, el pedido se rechaza. Si cambias un precio aquí,
+// cámbialo también en seed-catalogo.sql (y reinserta).
+//
+// Cuando tu compañero implemente GET /productos, borra este archivo y usa
+// CatalogoService.listarProductos().
+
+import { Producto } from '../models/catalogo.models';
+
+export const PRODUCTOS_MOCK: Producto[] = [
+  {
+    id: '11111111-1111-1111-1111-111111111111',
+    categoria: { id: 'c0000000-0000-0000-0000-000000000001', nombre: 'Bebidas', descripcion: '', estado: 'ACTIVO' },
+    nombre: 'Café Americano',
+    descripcion: 'Café negro 12oz',
+    precioBase: 5.50,
+    imagenUrl: '',
+    estado: 'ACTIVO',
+    gruposModificadores: [],
+  },
+  {
+    id: '22222222-2222-2222-2222-222222222222',
+    categoria: { id: 'c0000000-0000-0000-0000-000000000001', nombre: 'Bebidas', descripcion: '', estado: 'ACTIVO' },
+    nombre: 'Jugo de Naranja',
+    descripcion: 'Jugo natural 16oz',
+    precioBase: 7.00,
+    imagenUrl: '',
+    estado: 'ACTIVO',
+    gruposModificadores: [],
+  },
+  {
+    id: '33333333-3333-3333-3333-333333333333',
+    categoria: { id: 'c0000000-0000-0000-0000-000000000002', nombre: 'Comidas', descripcion: '', estado: 'ACTIVO' },
+    nombre: 'Sándwich de Pollo',
+    descripcion: 'Pan ciabatta con pollo',
+    precioBase: 12.00,
+    imagenUrl: '',
+    estado: 'ACTIVO',
+    gruposModificadores: [],
+  },
+  {
+    id: '44444444-4444-4444-4444-444444444444',
+    categoria: { id: 'c0000000-0000-0000-0000-000000000002', nombre: 'Comidas', descripcion: '', estado: 'ACTIVO' },
+    nombre: 'Empanada',
+    descripcion: 'Empanada de carne',
+    precioBase: 4.50,
+    imagenUrl: '',
+    estado: 'ACTIVO',
+    gruposModificadores: [],
+  },
+  {
+    id: '55555555-5555-5555-5555-555555555555',
+    categoria: { id: 'c0000000-0000-0000-0000-000000000003', nombre: 'Postres', descripcion: '', estado: 'ACTIVO' },
+    nombre: 'Brownie',
+    descripcion: 'Brownie de chocolate',
+    precioBase: 6.00,
+    imagenUrl: '',
+    estado: 'ACTIVO',
+    gruposModificadores: [],
+  },
+];

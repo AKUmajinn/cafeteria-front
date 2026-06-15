@@ -1,102 +1,138 @@
 <div class="row h-100">
+  <!-- Columna izquierda: categorías (maqueta estática, no parte del turno) -->
   <div class="col-lg-2">
     <h5 class="fw-bold mb-4 text-uppercase">Categorías</h5>
     <div class="d-flex flex-column gap-3">
-      <button *ngFor="let cat of categorias" class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center w-100">
-        <i class="bi bi-cup-hot fs-4 me-3 text-cafe"></i> 
-        <span class="fw-bold text-uppercase">{{ cat.nombre }}</span>
+      <button class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center">
+        <i class="bi bi-cup-hot fs-4 me-3 text-muted"></i>
+        <span class="fw-bold text-muted">CAFÉ</span>
+      </button>
+      <button class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center">
+        <i class="bi bi-bag-heart fs-4 me-3 text-muted"></i>
+        <span class="fw-bold text-muted">SNACKS</span>
+      </button>
+      <button class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center">
+        <i class="bi bi-moon-stars fs-4 me-3 text-muted"></i>
+        <span class="fw-bold text-muted">COMBOS</span>
+      </button>
+      <button class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center">
+        <i class="bi bi-cake2 fs-4 me-3 text-muted"></i>
+        <span class="fw-bold text-muted">POSTRES</span>
       </button>
     </div>
   </div>
 
+  <!-- Columna central: resumen del turno (datos reales) -->
   <div class="col-lg-7 border-start border-end px-4">
     <h5 class="fw-bold mb-4 text-uppercase">Resumen del Día y Turno</h5>
-    
-    <div class="row g-3 mb-4">
-      <div class="col-md-6">
-        <div class="bg-white p-4 rounded-4 shadow-sm d-flex align-items-center justify-content-between h-100">
-          <div class="d-flex align-items-center gap-3">
-            <div class="bg-light p-3 rounded-circle"><i class="bi bi-cash-stack fs-3 text-cafe"></i></div>
-            <span class="fw-bold text-muted text-uppercase">Ventas Hoy</span>
-          </div>
-          <h3 class="fw-bold m-0">$350.00</h3>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="bg-white p-4 rounded-4 shadow-sm d-flex align-items-center justify-content-between h-100">
-          <div class="d-flex align-items-center gap-3">
-            <div class="bg-light p-3 rounded-circle"><i class="bi bi-check-circle fs-3 text-success"></i></div>
-            <span class="fw-bold text-muted text-uppercase">Completadas</span>
-          </div>
-          <h3 class="fw-bold m-0">45</h3>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="bg-white p-4 rounded-4 shadow-sm d-flex align-items-center justify-content-between h-100">
-          <div class="d-flex align-items-center gap-3">
-            <div class="bg-light p-3 rounded-circle"><i class="bi bi-x-circle fs-3 text-danger"></i></div>
-            <span class="fw-bold text-muted text-uppercase">Canceladas</span>
-          </div>
-          <h3 class="fw-bold m-0">2</h3>
-        </div>
-      </div>
-    </div>
 
-    <div class="bg-white rounded-4 shadow-sm overflow-hidden mb-4">
-      <table class="table table-borderless table-hover m-0 align-middle">
-        <thead class="table-light">
-          <tr>
-            <th class="py-3 px-4">Turno</th>
-            <th class="py-3 px-4">Cajero</th>
-            <th class="py-3 px-4">Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="py-3 px-4">16:00 - 00:00</td>
-            <td class="py-3 px-4">Juan P.</td>
-            <td class="py-3 px-4"><span class="badge bg-success rounded-pill px-3 py-2">Activa</span></td>
-          </tr>
-          <tr>
-            <td class="py-3 px-4">08:00 - 16:00</td>
-            <td class="py-3 px-4">Maria G.</td>
-            <td class="py-3 px-4"><span class="badge bg-secondary rounded-pill px-3 py-2">Cerrado</span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <!-- Mensaje de error/aviso -->
+    @if (mensaje()) {
+      <div class="alert alert-warning rounded-4 py-2 px-3">{{ mensaje() }}</div>
+    }
 
-    <div class="bg-white p-4 rounded-4 shadow-sm text-muted">
-      <span class="fw-bold">NOTES:</span> Revisión de caja chica completada sin novedades.
-    </div>
+    @if (cargando()) {
+      <div class="text-muted">Cargando resumen…</div>
+    } @else {
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="bg-white p-4 rounded-4 shadow-sm d-flex align-items-center justify-content-between h-100">
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-light p-3 rounded-circle"><i class="bi bi-cash-stack fs-3 text-cafe"></i></div>
+              <span class="fw-bold text-muted text-uppercase">Ventas Hoy</span>
+            </div>
+            <h3 class="fw-bold m-0">${{ (turno()?.ventasHoy ?? 0) | number:'1.2-2' }}</h3>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="bg-white p-4 rounded-4 shadow-sm d-flex align-items-center justify-content-between h-100">
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-light p-3 rounded-circle"><i class="bi bi-check-circle fs-3 text-success"></i></div>
+              <span class="fw-bold text-muted text-uppercase">Completadas</span>
+            </div>
+            <h3 class="fw-bold m-0">{{ turno()?.completadas ?? 0 }}</h3>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="bg-white p-4 rounded-4 shadow-sm d-flex align-items-center justify-content-between h-100">
+            <div class="d-flex align-items-center gap-3">
+              <div class="bg-light p-3 rounded-circle"><i class="bi bi-x-circle fs-3 text-danger"></i></div>
+              <span class="fw-bold text-muted text-uppercase">Canceladas</span>
+            </div>
+            <h3 class="fw-bold m-0">{{ turno()?.canceladas ?? 0 }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-4 shadow-sm overflow-hidden mb-4">
+        <table class="table table-borderless table-hover m-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th class="py-3 px-4">Turno</th>
+              <th class="py-3 px-4">Cajero</th>
+              <th class="py-3 px-4">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (hayTurnoActivo()) {
+              <tr>
+                <td class="py-3 px-4">#{{ turno()?.turnoId }}</td>
+                <td class="py-3 px-4">{{ turno()?.cajero }}</td>
+                <td class="py-3 px-4">
+                  <span class="badge bg-success rounded-pill px-3 py-2">Activo</span>
+                </td>
+              </tr>
+            } @else {
+              <tr>
+                <td class="py-4 px-4 text-muted" colspan="3">No hay ningún turno abierto.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </div>
 
+  <!-- Columna derecha: gestión de turno (apertura / cierre) -->
   <div class="col-lg-3 px-4">
     <h5 class="fw-bold mb-4 text-uppercase">Gestión de Turno</h5>
-    
-    <button class="btn btn-outline-dark w-100 py-3 rounded-4 fw-bold mb-4 shadow-sm">
-      INICIAR NUEVO TURNO /<br>APERTURA DE CAJA
-    </button>
 
-    <div class="bg-white p-4 rounded-4 shadow-sm">
-      <h6 class="fw-bold mb-4 text-uppercase border-bottom pb-2">Cierre de Turno</h6>
-      
-      <div class="form-check mb-3">
-        <input class="form-check-input" type="checkbox" id="cierreCaja">
-        <label class="form-check-label fw-semibold" for="cierreCaja">
-          Cierre de Caja
-        </label>
+    <!-- APERTURA: solo si NO hay turno activo -->
+    @if (!hayTurnoActivo()) {
+      <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
+        <h6 class="fw-bold mb-3 text-uppercase border-bottom pb-2">Apertura de Caja</h6>
+        <input
+          type="text"
+          class="form-control rounded-3 mb-3"
+          placeholder="Nombre del cajero"
+          [(ngModel)]="cajero"
+          [disabled]="procesando()" />
+        <button
+          class="btn btn-outline-dark w-100 py-3 rounded-4 fw-bold shadow-sm"
+          (click)="abrir()"
+          [disabled]="procesando()">
+          {{ procesando() ? 'ABRIENDO…' : 'INICIAR NUEVO TURNO' }}
+        </button>
       </div>
-      <div class="form-check mb-4">
-        <input class="form-check-input" type="checkbox" id="reporteFinal">
-        <label class="form-check-label fw-semibold" for="reporteFinal">
-          Reporte Final
-        </label>
-      </div>
+    }
 
-      <button class="btn btn-cafe w-100 py-3 rounded-pill fw-bold shadow-sm">
-        CONFIRMAR CIERRE DE CAJA
-      </button>
-    </div>
+    <!-- CIERRE: solo si HAY turno activo -->
+    @if (hayTurnoActivo()) {
+      <div class="bg-white p-4 rounded-4 shadow-sm">
+        <h6 class="fw-bold mb-4 text-uppercase border-bottom pb-2">Cierre de Turno</h6>
+
+        <p class="text-muted mb-4">
+          Turno <span class="fw-bold">#{{ turno()?.turnoId }}</span>
+          a cargo de <span class="fw-bold">{{ turno()?.cajero }}</span>.
+        </p>
+
+        <button
+          class="btn btn-cafe w-100 py-3 rounded-pill fw-bold shadow-sm"
+          (click)="cerrar()"
+          [disabled]="procesando()">
+          {{ procesando() ? 'CERRANDO…' : 'CONFIRMAR CIERRE DE CAJA' }}
+        </button>
+      </div>
+    }
   </div>
 </div>

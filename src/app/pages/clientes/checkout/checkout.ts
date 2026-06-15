@@ -1,21 +1,76 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CarritoService } from '../../../core/services/carrito.service';
+import { PedidoService } from '../../../core/services/pedido.service';
 
 @Component({
   selector: 'app-checkout',
-  standalone: true,
-  imports: [RouterLink, CommonModule],
-  templateUrl: './checkout.html'
+  imports: [DecimalPipe, RouterLink, FormsModule],
+  templateUrl: './checkout.html',
 })
 export class Checkout {
-  mostrarModal = false;
+  readonly carrito = inject(CarritoService);
+  private readonly pedidoService = inject(PedidoService);
 
-  procesarPedido() {
-    this.mostrarModal = true;
+  // Datos de contacto (ngModel)
+  nombre = '';
+  telefono = '';
+  // Método de entrega -> tipo del pedido
+  tipoEntrega = 'LLEVAR';
+
+  readonly procesando = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly mostrarModal = signal(false);
+
+  // Datos del pedido confirmado (para el modal)
+  readonly pedidoId = signal<number | null>(null);
+  readonly pedidoTotal = signal(0);
+
+  readonly carritoVacio = computed(() => this.carrito.items().length === 0);
+
+  procesarPedido(): void {
+    if (this.carritoVacio()) {
+      this.error.set('Tu carrito está vacío.');
+      return;
+    }
+    this.procesando.set(true);
+    this.error.set(null);
+
+    // En un sistema con login, el cajero saldría de la sesión. Para el pedido
+    // del cliente usamos su nombre (o un valor por defecto).
+    const cajero = this.nombre.trim() || 'Cliente Web';
+    const request = this.carrito.toPedidoRequest(cajero, this.tipoEntrega);
+
+    this.pedidoService.crearPedido(request).subscribe({
+      next: (pedido) => {
+        this.procesando.set(false);
+        this.pedidoId.set(pedido.id);
+        this.pedidoTotal.set(pedido.total);
+        this.carrito.vaciar();
+        this.mostrarModal.set(true);
+      },
+      error: (err) => {
+        this.procesando.set(false);
+        // Errores típicos: no hay turno abierto, precio que no coincide.
+        this.error.set(
+          err?.error?.mensaje ??
+          'No se pudo procesar el pedido. Es posible que no haya un turno de caja abierto.'
+        );
+      },
+    });
   }
 
-  cerrarModal() {
-    this.mostrarModal = false;
+  cerrarModal(): void {
+    this.mostrarModal.set(false);
+  }
+
+  etiquetaEntrega(): string {
+    switch (this.tipoEntrega) {
+      case 'LOCAL': return 'Consumo local';
+      case 'MESA': return 'Entrega en mesa';
+      default: return 'Para llevar';
+    }
   }
 }

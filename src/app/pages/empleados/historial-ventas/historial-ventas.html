@@ -5,7 +5,8 @@
     <div class="d-flex gap-3 mb-4">
       <div class="input-group bg-white rounded-3 shadow-sm grow">
         <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-        <input type="text" class="form-control border-0 bg-transparent py-2" placeholder="Buscar orden...">
+        <input type="text" class="form-control border-0 bg-transparent py-2" 
+               placeholder="Buscar por ID o Cajero..." [(ngModel)]="terminoBusqueda">
       </div>
       <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-3 shadow-sm">
         <input type="date" class="form-control border-0 bg-transparent form-control-sm">
@@ -28,7 +29,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (pedido of pedidos; track pedido.id) {
+          @for (pedido of pedidosFiltrados; track pedido.id) {
             <tr>
               <td class="py-3 fw-bold text-cafe">#{{ pedido.id }}</td>
               <td class="py-3 text-muted">{{ pedido.fecha | date:'dd/MM/yy HH:mm' }}</td>
@@ -53,7 +54,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="7" class="py-4 text-center text-muted">No hay pedidos registrados.</td>
+              <td colspan="7" class="py-4 text-center text-muted">No hay pedidos encontrados.</td>
             </tr>
           }
         </tbody>

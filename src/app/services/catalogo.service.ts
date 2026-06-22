@@ -19,17 +19,23 @@ export class CatalogoService {
     return this.http.get<Categoria[]>(`${this.apiUrl}/categorias`);
   }
 
-  listarProductos(categoriaId?: string): Observable<Producto[]> {
+  listarProductos(filtros?: { nombre?: string, categoriaId?: string, precioMin?: number, precioMax?: number }): Observable<Producto[]> {
     let params = new HttpParams();
-    if (categoriaId) {
-      params = params.set('categoriaId', categoriaId);
+    
+    if (filtros?.categoriaId) {
+      params = params.set('categoriaId', filtros.categoriaId);
     }
-    return this.http.get<Producto[]>(`${this.apiUrl}/productos`, { params });
-  }
+    if (filtros?.nombre) {
+      params = params.set('nombre', filtros.nombre);
+    }
+    if (filtros?.precioMin !== undefined && filtros?.precioMin !== null) {
+      params = params.set('precioMin', filtros.precioMin.toString());
+    }
+    if (filtros?.precioMax !== undefined && filtros?.precioMax !== null) {
+      params = params.set('precioMax', filtros.precioMax.toString());
+    }
 
-  buscarProductos(nombre: string): Observable<Producto[]> {
-    let params = new HttpParams().set('nombre', nombre);
-    return this.http.get<Producto[]>(`${this.apiUrl}/productos/buscar`, { params });
+    return this.http.get<Producto[]>(`${this.apiUrl}/productos`, { params });
   }
 
   eliminarProducto(id: string): Observable<string> {

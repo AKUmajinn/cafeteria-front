@@ -19,8 +19,11 @@ export class Catalogo implements OnInit {
 
   categorias: Categoria[] = [];
   readonly productos = signal<Producto[]>([]);
-  terminoBusqueda: string = '';
   readonly cargando = signal<boolean>(true);
+
+  categoriaSeleccionada: string = '';
+  terminoBusqueda: string = '';
+  precioMax: number = 50; 
 
   ngOnInit(): void {
     this.catalogoService.getCategorias().subscribe({
@@ -28,31 +31,19 @@ export class Catalogo implements OnInit {
       error: (err) => console.error(err)
     });
 
-    this.cargarProductos();
+    this.aplicarFiltros();
   }
 
-  cargarProductos(): void {
+  aplicarFiltros(): void {
     this.cargando.set(true);
-    this.catalogoService.listarProductos().subscribe({
-      next: (data) => {
-        this.productos.set(data);
-        this.cargando.set(false);
-      },
-      error: (err) => {
-        console.error(err);
-        this.cargando.set(false);
-      }
-    });
-  }
 
-  buscar(): void {
-    if (this.terminoBusqueda.trim() === '') {
-      this.cargarProductos();
-      return;
-    }
-    
-    this.cargando.set(true);
-    this.catalogoService.buscarProductos(this.terminoBusqueda).subscribe({
+    const filtros = {
+      nombre: this.terminoBusqueda.trim() !== '' ? this.terminoBusqueda.trim() : undefined,
+      categoriaId: this.categoriaSeleccionada !== '' ? this.categoriaSeleccionada : undefined,
+      precioMax: this.precioMax
+    };
+
+    this.catalogoService.listarProductos(filtros).subscribe({
       next: (data) => {
         this.productos.set(data);
         this.cargando.set(false);

@@ -38,6 +38,10 @@ export class CatalogoService {
     return this.http.get<Producto[]>(`${this.apiUrl}/productos`, { params });
   }
 
+  crearProducto(producto: any): Observable<Producto> {
+    return this.http.post<Producto>(`${this.apiUrl}/productos`, producto);
+  }
+
   eliminarProducto(id: string): Observable<string> {
     return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }

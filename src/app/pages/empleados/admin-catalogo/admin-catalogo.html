@@ -4,84 +4,44 @@
     
     <div class="input-group bg-white rounded-3 shadow-sm mb-4">
       <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-      <input type="text" class="form-control border-0 bg-transparent py-2" placeholder="Buscar...">
+      <input type="text" class="form-control border-0 bg-transparent py-2" placeholder="Buscar producto..." [(ngModel)]="terminoBusqueda" (keyup)="aplicarFiltros()">
     </div>
 
-    <div class="row g-3 mb-4">
-      <div class="col-md-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center">
-          <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
-            <i class="bi bi-cup-hot text-cafe fs-3"></i>
-          </div>
-          <div class="grow">
-            <h6 class="fw-bold mb-1">Latte</h6>
-            <p class="text-cafe fw-bold mb-2">$4.50</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
-              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="bi bi-trash"></i> Eliminar</button>
-            </div>
-          </div>
+    @if (cargando()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-cafe" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden"></span>
         </div>
       </div>
-
-      <div class="col-md-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center">
-          <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
-            <i class="bi bi-bag-heart text-cafe fs-3"></i>
-          </div>
-          <div class="grow">
-            <h6 class="fw-bold mb-1">Muffin</h6>
-            <p class="text-cafe fw-bold mb-2">$3.00</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
-              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="bi bi-trash"></i> Eliminar</button>
+    } @else if (productos().length === 0) {
+      <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+        <i class="bi bi-box-seam text-muted mb-3 d-block" style="font-size: 3rem;"></i>
+        <h5 class="fw-bold text-dark">No se encontraron productos</h5>
+        <p class="text-muted mb-0">No hay productos que coincidan con la búsqueda o filtros actuales.</p>
+      </div>
+    } @else {
+      <div class="row g-3 mb-4">
+        @for (p of productos(); track p.id) {
+          <div class="col-md-6">
+            <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center h-100">
+              <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
+                <i class="bi bi-cup-hot text-cafe fs-3"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h6 class="fw-bold mb-1">{{ p.nombre }}</h6>
+                <p class="text-cafe fw-bold mb-2">${{ p.precioBase | number:'1.2-2' }}</p>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
+                  <button (click)="eliminarProducto(p.id)" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                    <i class="bi bi-trash"></i> Eliminar
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
-
-      <div class="col-md-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center">
-          <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
-            <i class="bi bi-cake2 text-cafe fs-3"></i>
-          </div>
-          <div class="grow">
-            <h6 class="fw-bold mb-1">Sándwich</h6>
-            <p class="text-cafe fw-bold mb-2">$5.50</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
-              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="bi bi-trash"></i> Eliminar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6" *ngIf="productoTest">
-        <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center">
-          <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
-            <i class="bi bi-cup text-cafe fs-3"></i>
-          </div>
-          <div class="grow">
-            <h6 class="fw-bold mb-1">{{ productoTest.nombre }}</h6>
-            <p class="text-cafe fw-bold mb-2">S/ {{ productoTest.precioBase | number:'1.2-2' }}</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
-              <button (click)="eliminarProducto(productoTest.id)" class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                <i class="bi bi-trash"></i> Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> <nav class="d-flex justify-content-center">
-      <ul class="pagination pagination-sm shadow-sm">
-        <li class="page-item"><a class="page-link text-dark" href="javascript:void(0)"><i class="bi bi-chevron-left"></i></a></li>
-        <li class="page-item active"><a class="page-link bg-cafe border-0" href="javascript:void(0)">1</a></li>
-        <li class="page-item"><a class="page-link text-dark" href="javascript:void(0)">2</a></li>
-        <li class="page-item"><a class="page-link text-dark" href="javascript:void(0)">3</a></li>
-        <li class="page-item"><a class="page-link text-dark" href="javascript:void(0)"><i class="bi bi-chevron-right"></i></a></li>
-      </ul>
-    </nav>
+    }
   </div>
 
   <div class="col-lg-2 border-start px-lg-4 mt-4 mt-lg-0">
@@ -89,17 +49,20 @@
     
     <div class="mb-4">
       <label class="form-label fw-semibold small">Categoría</label>
-      <select class="form-select bg-white shadow-sm border-0 py-2">
+      <select class="form-select bg-white shadow-sm border-0 py-2" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()">
         <option value="">Todas</option>
-        <option *ngFor="let cat of categorias" [value]="cat.id">
-          {{ cat.nombre }}
-        </option>
+        @for (cat of categorias; track cat.id) {
+          <option [value]="cat.id">{{ cat.nombre }}</option>
+        }
       </select>
     </div>
 
     <div class="mb-4">
-      <label class="form-label fw-semibold small">Rango Precio</label>
-      <input type="range" class="form-range" min="0" max="100">
+      <label class="form-label fw-semibold small d-flex justify-content-between">
+        <span>Precio Máx.</span>
+        <span class="text-cafe">${{ precioMax | number:'1.2-2' }}</span>
+      </label>
+      <input type="range" class="form-range" min="1" max="50" step="1" [(ngModel)]="precioMax" (change)="aplicarFiltros()">
     </div>
   </div>
 
@@ -108,21 +71,33 @@
       <h5 class="fw-bold mb-4">AÑADIR PRODUCTO</h5>
       
       <div class="mb-3">
-        <label class="form-label fw-semibold">Nombre</label>
-        <input type="text" class="form-control bg-light border-0 py-2">
+        <label class="form-label fw-semibold">Nombre *</label>
+        <input type="text" class="form-control bg-light border-0 py-2" [(ngModel)]="nuevoProducto.nombre">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Categoría *</label>
+        <select class="form-select bg-light border-0 py-2" [(ngModel)]="nuevoProducto.categoriaId">
+          <option value="">Seleccionar...</option>
+          @for (cat of categorias; track cat.id) {
+            <option [value]="cat.id">{{ cat.nombre }}</option>
+          }
+        </select>
       </div>
       
       <div class="mb-3">
-        <label class="form-label fw-semibold">Precio</label>
-        <input type="text" class="form-control bg-light border-0 py-2">
+        <label class="form-label fw-semibold">Precio *</label>
+        <input type="number" class="form-control bg-light border-0 py-2" [(ngModel)]="nuevoProducto.precioBase">
       </div>
       
       <div class="mb-4">
         <label class="form-label fw-semibold">Descripción</label>
-        <textarea class="form-control bg-light border-0" rows="4"></textarea>
+        <textarea class="form-control bg-light border-0" rows="3" [(ngModel)]="nuevoProducto.descripcion"></textarea>
       </div>
 
-      <button class="btn btn-cafe w-100 rounded-pill fw-bold py-2 mt-auto">AÑADIR</button>
+      <button class="btn btn-cafe w-100 rounded-pill fw-bold py-2 mt-auto" (click)="crearProducto()" [disabled]="guardando">
+        {{ guardando ? 'GUARDANDO...' : 'AÑADIR' }}
+      </button>
     </div>
   </div>
 </div>

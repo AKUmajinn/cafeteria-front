@@ -52,13 +52,13 @@
       <div class="row g-4 text-center">
         @for (p of productos(); track p.id) {
           <div class="col-md-4">
-            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 transition-hover">
+            <a [routerLink]="['/clientes/producto', p.id]" class="card h-100 border-0 shadow-sm rounded-4 p-4 transition-hover text-decoration-none">
               <i class="bi bi-cup-hot text-cafe mb-3" style="font-size: 4.5rem;"></i>
               <h5 class="fw-bold text-dark">{{ p.nombre }}</h5>
               <p class="text-muted mb-2 small">{{ p.descripcion }}</p>
               <p class="fw-bold fs-5 text-cafe mb-3">${{ p.precioBase | number:'1.2-2' }}</p>
-              <button class="btn btn-cafe w-100 rounded-pill fw-semibold" (click)="agregar(p)">Añadir</button>
-            </div>
+              <button class="btn btn-cafe w-100 rounded-pill fw-semibold">Personalizar</button>
+            </a>
           </div>
         }
       </div>

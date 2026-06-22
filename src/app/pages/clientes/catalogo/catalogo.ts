@@ -54,8 +54,4 @@ export class Catalogo implements OnInit {
       }
     });
   }
-
-  agregar(producto: Producto): void {
-    this.carrito.agregar(producto);
-  }
 }

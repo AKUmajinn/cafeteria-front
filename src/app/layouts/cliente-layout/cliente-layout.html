@@ -4,7 +4,7 @@
       <i class="bi bi-cup-hot-fill me-2"></i>Cafetería
     </a>
 
-    <button class="navbar-toggler" type="typeof" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -22,9 +22,11 @@
         <button class="btn btn-outline-dark btn-sm rounded-pill px-3">Log In</button>
         <button class="btn btn-cafe rounded-circle p-2 position-relative" routerLink="/clientes/carrito">
           <i class="bi bi-cart3 fs-5"></i>
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            3
-          </span>
+          @if (carrito.cantidadTotal() > 0) {
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {{ carrito.cantidadTotal() }}
+            </span>
+          }
         </button>
       </div>
     </div>

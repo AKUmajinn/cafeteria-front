@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
+import { CarritoService } from '../../core/services/carrito.service';
 
 @Component({
   selector: 'app-cliente-layout',
@@ -9,5 +10,5 @@ import { RouterOutlet, RouterLink } from '@angular/router';
   styleUrl: './cliente-layout.css'
 })
 export class ClienteLayout {
-
+  readonly carrito = inject(CarritoService);
 }

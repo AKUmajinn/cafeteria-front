@@ -1,23 +1,30 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CarritoService } from '../../../core/services/carrito.service';
 import { PedidoService } from '../../../core/services/pedido.service';
-import { Producto } from '../../../core/models/catalogo.models';
-import { PRODUCTOS_MOCK } from '../../../core/data/productos-mock';
+import { CatalogoService } from '../../../services/catalogo.service';
+import { Producto, Categoria } from '../../../core/models/catalogo.models';
 
 @Component({
   selector: 'app-pos',
-  imports: [DecimalPipe],
+  standalone: true,
+  imports: [DecimalPipe, FormsModule],
   templateUrl: './pos.html',
   styleUrl: './pos.css'
 })
-export class Pos {
+export class Pos implements OnInit {
   readonly carrito = inject(CarritoService);
   private readonly pedidoService = inject(PedidoService);
+  private readonly catalogoService = inject(CatalogoService);
 
-  // TEMPORAL: productos desde el mock. Cuando exista GET /productos,
-  // reemplazar por una llamada a CatalogoService.listarProductos().
-  readonly productos = signal<Producto[]>(PRODUCTOS_MOCK);
+  readonly categorias = signal<Categoria[]>([]);
+  readonly productos = signal<Producto[]>([]);
+  readonly cargando = signal(true);
+
+  categoriaSeleccionada: string = '';
+  terminoBusqueda: string = '';
+  precioMax: number = 50;
 
   readonly procesando = signal(false);
   readonly mensaje = signal<string | null>(null);
@@ -25,9 +32,42 @@ export class Pos {
 
   readonly carritoVacio = computed(() => this.carrito.items().length === 0);
 
-  // Cajero del turno. En un sistema con login saldría de la sesión;
-  // por ahora lo dejamos fijo para probar.
   private readonly cajero = 'Marco';
+
+  ngOnInit(): void {
+    this.catalogoService.getCategorias().subscribe({
+      next: (data) => this.categorias.set(data),
+      error: (err) => console.error(err)
+    });
+
+    this.aplicarFiltros();
+  }
+
+  aplicarFiltros(): void {
+    this.cargando.set(true);
+
+    const filtros = {
+      nombre: this.terminoBusqueda.trim() !== '' ? this.terminoBusqueda.trim() : undefined,
+      categoriaId: this.categoriaSeleccionada !== '' ? this.categoriaSeleccionada : undefined,
+      precioMax: this.precioMax
+    };
+
+    this.catalogoService.listarProductos(filtros).subscribe({
+      next: (data) => {
+        this.productos.set(data);
+        this.cargando.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.cargando.set(false);
+      }
+    });
+  }
+
+  seleccionarCategoria(id: string): void {
+    this.categoriaSeleccionada = id;
+    this.aplicarFiltros();
+  }
 
   agregar(producto: Producto): void {
     this.carrito.agregar(producto);
@@ -53,7 +93,6 @@ export class Pos {
       },
       error: (err) => {
         this.procesando.set(false);
-        // Errores típicos del backend: sin turno activo, precio que no coincide.
         const txt = err?.error?.mensaje ?? 'No se pudo procesar el pedido. ¿Hay un turno abierto?';
         this.mostrarMensaje(txt, true);
       },

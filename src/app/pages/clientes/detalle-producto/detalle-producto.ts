@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { CatalogoService } from '../../../services/catalogo.service';
+import { CarritoService } from '../../../core/services/carrito.service';
 import { Producto } from '../../../core/models/catalogo.models';
 
 @Component({
@@ -14,6 +15,7 @@ import { Producto } from '../../../core/models/catalogo.models';
 export class DetalleProducto implements OnInit {
   private route = inject(ActivatedRoute);
   private catalogoService = inject(CatalogoService);
+  private carritoService = inject(CarritoService);
   private cdr = inject(ChangeDetectorRef);
 
   producto?: Producto;
@@ -43,5 +45,11 @@ export class DetalleProducto implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  agregarAlCarrito(): void {
+    if (this.producto) {
+      this.carritoService.agregar(this.producto);
+    }
   }
 }

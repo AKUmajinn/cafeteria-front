@@ -2,17 +2,17 @@
   <div class="col-md-3">
     <div class="bg-white p-4 rounded-4 shadow-sm">
       <h5 class="fw-bold mb-4">FILTROS:</h5>
-      <!-- Filtros estáticos por ahora; se conectan cuando exista
-           GET /productos?categoriaId= -->
+      
       <div class="mb-4">
         <label class="form-label fw-semibold">Categoría</label>
         <select class="form-select border-0 bg-light">
           <option>Todas</option>
-          <option>Bebidas</option>
-          <option>Comidas</option>
-          <option>Postres</option>
+          @for (cat of categorias; track cat.id) {
+            <option [value]="cat.id">{{ cat.nombre }}</option>
+          }
         </select>
       </div>
+
       <div>
         <label class="form-label fw-semibold">Rango Precio</label>
         <input type="range" class="form-range" min="0" max="100">
@@ -25,35 +25,46 @@
       <h2 class="fw-bold m-0">NUESTRO MENÚ</h2>
       <div class="w-50 ms-4">
         <div class="input-group shadow-sm rounded-pill overflow-hidden">
-          <span class="input-group-text bg-white border-0 ps-3"><i class="bi bi-search"></i></span>
-          <input type="text" class="form-control border-0 shadow-none py-2" placeholder="Buscar...">
+          <span class="input-group-text bg-white border-0 ps-3">
+            <i class="bi bi-search"></i>
+          </span>
+          <input type="text" class="form-control border-0 shadow-none py-2" placeholder="Buscar..." [(ngModel)]="terminoBusqueda" (keyup)="buscar()">
         </div>
       </div>
     </div>
 
-    <div class="row g-4 text-center">
-      @for (p of productos(); track p.id) {
-        <div class="col-md-4">
-          <div class="card h-100 border-0 shadow-sm rounded-4 p-4 transition-hover">
-            <i class="bi bi-cup-hot text-cafe mb-3" style="font-size: 4.5rem;"></i>
-            <h5 class="fw-bold text-dark">{{ p.nombre }}</h5>
-            <p class="text-muted mb-2 small">{{ p.descripcion }}</p>
-            <p class="fw-bold fs-5 text-cafe mb-3">${{ p.precioBase | number:'1.2-2' }}</p>
-            <button class="btn btn-cafe w-100 rounded-pill fw-semibold" (click)="agregar(p)">
-              Añadir
-            </button>
-          </div>
+    @if (cargando()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-cafe" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Cargando...</span>
         </div>
-      }
-    </div>
+      </div>
+    } @else if (productos().length === 0) {
+      <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+        <i class="bi bi-search text-muted mb-3 d-block" style="font-size: 3rem;"></i>
+        <h5 class="fw-bold text-dark">No se encontraron productos</h5>
+        <p class="text-muted mb-0">Intenta buscar con otras palabras o cambiar los filtros.</p>
+      </div>
+    } @else {
+      <div class="row g-4 text-center">
+        @for (p of productos(); track p.id) {
+          <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 transition-hover">
+              <i class="bi bi-cup-hot text-cafe mb-3" style="font-size: 4.5rem;"></i>
+              <h5 class="fw-bold text-dark">{{ p.nombre }}</h5>
+              <p class="text-muted mb-2 small">{{ p.descripcion }}</p>
+              <p class="fw-bold fs-5 text-cafe mb-3">${{ p.precioBase | number:'1.2-2' }}</p>
+              <button class="btn btn-cafe w-100 rounded-pill fw-semibold" (click)="agregar(p)">Añadir</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </div>
 </div>
 
-<!-- Acceso flotante al carrito cuando tiene ítems -->
 @if (carrito.cantidadTotal() > 0) {
-  <a routerLink="/clientes/carrito"
-     class="btn btn-cafe rounded-pill shadow position-fixed d-flex align-items-center gap-2 px-4 py-3"
-     style="bottom: 24px; right: 24px; z-index: 1050;">
+  <a routerLink="/clientes/carrito" class="btn btn-cafe rounded-pill shadow position-fixed d-flex align-items-center gap-2 px-4 py-3" style="bottom: 24px; right: 24px; z-index: 1050;">
     <i class="bi bi-cart-fill"></i>
     Ver carrito ({{ carrito.cantidadTotal() }})
   </a>

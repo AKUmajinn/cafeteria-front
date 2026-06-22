@@ -1,6 +1,3 @@
-// Modelos espejados de las entidades/DTOs de ms-catalogo
-// UUID de Java -> string en TS | BigDecimal/Double -> number
-
 export interface ItemModificador {
   id: string;
   nombre: string;

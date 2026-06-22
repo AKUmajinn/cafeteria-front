@@ -1,16 +1,3 @@
-// productos-mock.ts
-// Productos de prueba para el FRONT, alineados 1:1 con seed-catalogo.sql.
-//
-// Úsalo temporalmente mientras NO exista GET /api/catalogo/productos.
-// Sirve para llenar el carrito y probar el flujo de pedidos de punta a punta.
-//
-// ⚠️ CRÍTICO: el `id` y el `precioBase` de cada producto deben coincidir
-// EXACTAMENTE con los de la BD. crearPedido() valida el precio contra el
-// catálogo; si difieren, el pedido se rechaza. Si cambias un precio aquí,
-// cámbialo también en seed-catalogo.sql (y reinserta).
-//
-// Cuando tu compañero implemente GET /productos, borra este archivo y usa
-// CatalogoService.listarProductos().
 
 import { Producto } from '../models/catalogo.models';
 

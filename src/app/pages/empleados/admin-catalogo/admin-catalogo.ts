@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CatalogoService, Categoria, Producto } from '../../../services/catalogo.service';
+import { CatalogoService } from '../../../services/catalogo.service';
+import { Categoria, Producto } from '../../../core/models/catalogo.models';
 
 @Component({
   selector: 'app-admin-catalogo',
@@ -14,7 +15,7 @@ export class AdminCatalogo implements OnInit {
   private cdr = inject(ChangeDetectorRef);
 
   categorias: Categoria[] = [];
-  productoTest?: Producto; // <-- Almacenará el producto real de la BD
+  productoTest?: Producto;
   errorMensaje: string = '';
 
   ngOnInit(): void {
@@ -32,14 +33,13 @@ export class AdminCatalogo implements OnInit {
   }
 
   cargarProductoDePrueba(): void {
-    // Consumimos TU endpoint GET /catalogo/{id} para traer los datos del DER
     this.catalogoService.getProductoPorId('f47ac10b-58cc-4372-a567-0e02b2c3d479').subscribe({
       next: (data) => {
         this.productoTest = data;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al recuperar el producto de prueba desde el microservicio', err);
+        console.error(err);
       }
     });
   }
@@ -49,7 +49,7 @@ export class AdminCatalogo implements OnInit {
       this.catalogoService.eliminarProducto(id).subscribe({
         next: () => {
           alert('Producto eliminado con éxito de forma lógica.');
-          this.productoTest = undefined; // Lo removemos de la pantalla al cambiar a INACTIVO
+          this.productoTest = undefined;
           this.cdr.detectChanges(); 
         },
         error: (err) => {

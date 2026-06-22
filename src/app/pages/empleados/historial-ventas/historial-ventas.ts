@@ -1,14 +1,15 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Necesario para el buscador
-import { CatalogoService, Categoria } from '../../../services/catalogo.service';
+import { FormsModule } from '@angular/forms';
+import { CatalogoService } from '../../../services/catalogo.service';
 import { PedidoService } from '../../../core/services/pedido.service';
 import { Pedido } from '../../../core/models/pedidos.models';
+import { Categoria } from '../../../core/models/catalogo.models';
 
 @Component({
   selector: 'app-historial-ventas',
   standalone: true,
-  imports: [CommonModule, FormsModule], // Importar FormsModule
+  imports: [CommonModule, FormsModule],
   templateUrl: './historial-ventas.html',
   styleUrl: './historial-ventas.css',
 })
@@ -21,10 +22,8 @@ export class HistorialVentas implements OnInit {
   categorias: Categoria[] = [];
   pedidos: Pedido[] = [];
   
-  // Variables para el buscador
   terminoBusqueda: string = '';
   
-  // Variables para el detalle del modal
   pedidoSeleccionado?: Pedido;
   mostrarModal = false;
 
@@ -33,7 +32,6 @@ export class HistorialVentas implements OnInit {
     this.cargarPedidos();
   }
 
-  // Getter reactivo para filtrar pedidos
   get pedidosFiltrados(): Pedido[] {
     const termino = this.terminoBusqueda.toLowerCase();
     return this.pedidos.filter(p => 
@@ -48,7 +46,7 @@ export class HistorialVentas implements OnInit {
         this.categorias = data;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error al poblar categorías:', err)
+      error: (err) => console.error(err)
     });
   }
 
@@ -58,7 +56,7 @@ export class HistorialVentas implements OnInit {
         this.pedidos = data;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error al cargar el historial:', err)
+      error: (err) => console.error(err)
     });
   }
 

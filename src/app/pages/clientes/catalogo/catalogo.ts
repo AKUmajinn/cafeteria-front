@@ -1,15 +1,15 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { CatalogoService, Categoria } from '../../../services/catalogo.service';
+import { FormsModule } from '@angular/forms';
+import { CatalogoService } from '../../../services/catalogo.service';
 import { CarritoService } from '../../../core/services/carrito.service';
-import { Producto } from '../../../core/models/catalogo.models';
-import { PRODUCTOS_MOCK } from '../../../core/data/productos-mock';
+import { Categoria, Producto } from '../../../core/models/catalogo.models';
 
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [DecimalPipe, RouterLink],
+  imports: [DecimalPipe, RouterLink, FormsModule],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
@@ -17,25 +17,53 @@ export class Catalogo implements OnInit {
   private catalogoService = inject(CatalogoService);
   readonly carrito = inject(CarritoService);
 
-  // Categorías reales desde ms-catalogo (consumo del compañero; intacto).
   categorias: Categoria[] = [];
-
-  // TEMPORAL: productos desde el mock mientras NO exista GET /api/catalogo/productos.
-  // Mismo criterio que en la página POS. Cuando el compañero implemente el endpoint,
-  // reemplazar por CatalogoService.listarProductos().
-  readonly productos = signal<Producto[]>(PRODUCTOS_MOCK);
+  readonly productos = signal<Producto[]>([]);
+  terminoBusqueda: string = '';
+  readonly cargando = signal<boolean>(true);
 
   ngOnInit(): void {
-    // Recupera las categorías reales del microservicio de catálogo.
     this.catalogoService.getCategorias().subscribe({
+      next: (data) => this.categorias = data,
+      error: (err) => console.error(err)
+    });
+
+    this.cargarProductos();
+  }
+
+  cargarProductos(): void {
+    this.cargando.set(true);
+    this.catalogoService.listarProductos().subscribe({
       next: (data) => {
-        this.categorias = data;
+        this.productos.set(data);
+        this.cargando.set(false);
       },
-      error: (err) => console.error('Error al cargar categorías en el cliente:', err)
+      error: (err) => {
+        console.error(err);
+        this.cargando.set(false);
+      }
     });
   }
 
-  // Agrega el producto al carrito (flujo de pedidos).
+  buscar(): void {
+    if (this.terminoBusqueda.trim() === '') {
+      this.cargarProductos();
+      return;
+    }
+    
+    this.cargando.set(true);
+    this.catalogoService.buscarProductos(this.terminoBusqueda).subscribe({
+      next: (data) => {
+        this.productos.set(data);
+        this.cargando.set(false);
+      },
+      error: (err) => {
+        console.error(err);
+        this.cargando.set(false);
+      }
+    });
+  }
+
   agregar(producto: Producto): void {
     this.carrito.agregar(producto);
   }

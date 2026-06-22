@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core'; // <-- Añade ChangeDetectorRef aquí
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { CatalogoService, Producto } from '../../../services/catalogo.service';
+import { CatalogoService } from '../../../services/catalogo.service';
+import { Producto } from '../../../core/models/catalogo.models';
 
 @Component({
   selector: 'app-detalle-producto',
@@ -13,7 +14,7 @@ import { CatalogoService, Producto } from '../../../services/catalogo.service';
 export class DetalleProducto implements OnInit {
   private route = inject(ActivatedRoute);
   private catalogoService = inject(CatalogoService);
-  private cdr = inject(ChangeDetectorRef); // <-- Inyecta el detector de cambios
+  private cdr = inject(ChangeDetectorRef);
 
   producto?: Producto;
   errorMensaje: string = '';
@@ -34,8 +35,6 @@ export class DetalleProducto implements OnInit {
       next: (data) => {
         this.producto = data;
         this.cargando = false;
-        
-        // ORDEN DE CONTROL: Fuerza a Angular a repintar el HTML de inmediato
         this.cdr.detectChanges(); 
       },
       error: (err) => {

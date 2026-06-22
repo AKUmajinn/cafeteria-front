@@ -1,8 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PedidoService } from '../../../core/services/pedido.service';
+import { CatalogoService } from '../../../services/catalogo.service';
 import { ResumenTurnoResponse } from '../../../core/models/pedidos.models';
+import { Categoria } from '../../../core/models/catalogo.models';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,22 +12,30 @@ import { ResumenTurnoResponse } from '../../../core/models/pedidos.models';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   private readonly pedidoService = inject(PedidoService);
+  private readonly catalogoService = inject(CatalogoService);
 
-  // Estado del turno activo (null = no hay turno abierto)
   readonly turno = signal<ResumenTurnoResponse | null>(null);
+  readonly categorias = signal<Categoria[]>([]);
   readonly cargando = signal(true);
-  readonly procesando = signal(false); // mientras se abre/cierra
+  readonly procesando = signal(false);
   readonly mensaje = signal<string | null>(null);
 
-  // Nombre del cajero para la apertura (enlazado con ngModel en el HTML)
   cajero = '';
 
   readonly hayTurnoActivo = computed(() => this.turno() !== null);
 
-  constructor() {
+  ngOnInit(): void {
     this.cargarResumen();
+    this.cargarCategorias();
+  }
+
+  cargarCategorias(): void {
+    this.catalogoService.getCategorias().subscribe({
+      next: (data) => this.categorias.set(data),
+      error: (err) => console.error(err)
+    });
   }
 
   cargarResumen(): void {
@@ -37,10 +47,6 @@ export class Dashboard {
         this.cargando.set(false);
       },
       error: () => {
-        // El backend lanza error cuando NO hay turno activo.
-        // Lo tratamos como "no hay turno abierto", no como fallo del servidor.
-        // (Cuando agregues @RestControllerAdvice en ms-pedidos, aquí podrás
-        //  distinguir un 404/409 "sin turno" de un 500 real.)
         this.turno.set(null);
         this.cargando.set(false);
       },
@@ -84,7 +90,14 @@ export class Dashboard {
   }
 
   private extraerMensaje(err: any, fallback: string): string {
-    // err.error.mensaje existirá cuando el backend devuelva errores limpios.
     return err?.error?.mensaje ?? fallback;
+  }
+
+  obtenerIcono(nombre: string): string {
+    const n = nombre.toLowerCase();
+    if (n.includes('caf') || n.includes('bebida')) return 'bi-cup-hot';
+    if (n.includes('snack') || n.includes('comida')) return 'bi-bag-heart';
+    if (n.includes('postre') || n.includes('dulce')) return 'bi-cake2';
+    return 'bi-tag';
   }
 }

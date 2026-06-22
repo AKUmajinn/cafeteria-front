@@ -19,6 +19,14 @@ export class CatalogoService {
     return this.http.get<Categoria[]>(`${this.apiUrl}/categorias`);
   }
 
+  crearCategoria(categoria: any): Observable<Categoria> {
+    return this.http.post<Categoria>(`${this.apiUrl}/categorias`, categoria);
+  }
+
+  actualizarCategoria(id: string, categoria: any): Observable<Categoria> {
+    return this.http.put<Categoria>(`${this.apiUrl}/categorias/${id}`, categoria);
+  }
+
   listarProductos(filtros?: { nombre?: string, categoriaId?: string, precioMin?: number, precioMax?: number }): Observable<Producto[]> {
     let params = new HttpParams();
     
@@ -40,6 +48,10 @@ export class CatalogoService {
 
   crearProducto(producto: any): Observable<Producto> {
     return this.http.post<Producto>(`${this.apiUrl}/productos`, producto);
+  }
+
+  actualizarProducto(id: string, producto: any): Observable<Producto> {
+    return this.http.put<Producto>(`${this.apiUrl}/productos/${id}`, producto);
   }
 
   eliminarProducto(id: string): Observable<string> {

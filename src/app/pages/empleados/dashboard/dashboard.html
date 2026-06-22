@@ -1,32 +1,19 @@
 <div class="row h-100">
-  <!-- Columna izquierda: categorías (maqueta estática, no parte del turno) -->
   <div class="col-lg-2">
     <h5 class="fw-bold mb-4 text-uppercase">Categorías</h5>
     <div class="d-flex flex-column gap-3">
-      <button class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center">
-        <i class="bi bi-cup-hot fs-4 me-3 text-muted"></i>
-        <span class="fw-bold text-muted">CAFÉ</span>
-      </button>
-      <button class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center">
-        <i class="bi bi-bag-heart fs-4 me-3 text-muted"></i>
-        <span class="fw-bold text-muted">SNACKS</span>
-      </button>
-      <button class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center">
-        <i class="bi bi-moon-stars fs-4 me-3 text-muted"></i>
-        <span class="fw-bold text-muted">COMBOS</span>
-      </button>
-      <button class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center">
-        <i class="bi bi-cake2 fs-4 me-3 text-muted"></i>
-        <span class="fw-bold text-muted">POSTRES</span>
-      </button>
+      @for (cat of categorias(); track cat.id) {
+        <button class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center">
+          <i class="bi {{ obtenerIcono(cat.nombre) }} fs-4 me-3 text-muted"></i>
+          <span class="fw-bold text-muted text-uppercase">{{ cat.nombre }}</span>
+        </button>
+      }
     </div>
   </div>
 
-  <!-- Columna central: resumen del turno (datos reales) -->
   <div class="col-lg-7 border-start border-end px-4">
     <h5 class="fw-bold mb-4 text-uppercase">Resumen del Día y Turno</h5>
 
-    <!-- Mensaje de error/aviso -->
     @if (mensaje()) {
       <div class="alert alert-warning rounded-4 py-2 px-3">{{ mensaje() }}</div>
     }
@@ -93,11 +80,9 @@
     }
   </div>
 
-  <!-- Columna derecha: gestión de turno (apertura / cierre) -->
   <div class="col-lg-3 px-4">
     <h5 class="fw-bold mb-4 text-uppercase">Gestión de Turno</h5>
 
-    <!-- APERTURA: solo si NO hay turno activo -->
     @if (!hayTurnoActivo()) {
       <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
         <h6 class="fw-bold mb-3 text-uppercase border-bottom pb-2">Apertura de Caja</h6>
@@ -116,7 +101,6 @@
       </div>
     }
 
-    <!-- CIERRE: solo si HAY turno activo -->
     @if (hayTurnoActivo()) {
       <div class="bg-white p-4 rounded-4 shadow-sm">
         <h6 class="fw-bold mb-4 text-uppercase border-bottom pb-2">Cierre de Turno</h6>

@@ -38,7 +38,6 @@ export class AdminCatalogo implements OnInit {
   categoriaEnEdicionId: string | null = null;
   guardandoCategoria = false;
 
-  // Variables para controlar las secciones desplegables
   mostrarFormProducto = true;
   mostrarFormCategoria = false;
 

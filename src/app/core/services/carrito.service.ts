@@ -5,7 +5,6 @@ import { DetalleRequest, PedidoRequest } from '../models/pedidos.models';
 export interface ItemCarrito {
   producto: Producto;
   cantidad: number;
-  /** Precio congelado al momento de agregar (snapshot, igual que en el backend) */
   precioUnitario: number;
 }
 
@@ -13,7 +12,6 @@ export interface ItemCarrito {
 export class CarritoService {
   private readonly _items = signal<ItemCarrito[]>([]);
 
-  // Estado de solo lectura para los componentes
   readonly items = this._items.asReadonly();
   readonly cantidadTotal = computed(() =>
     this._items().reduce((acc, i) => acc + i.cantidad, 0)
@@ -52,13 +50,12 @@ export class CarritoService {
     this._items.set([]);
   }
 
-  /** Convierte el carrito al contrato que espera POST /api/pedidos */
   toPedidoRequest(cajero: string, tipo: string): PedidoRequest {
     const detalles: DetalleRequest[] = this._items().map(i => ({
       productoId: i.producto.id,
-      nombreProducto: i.producto.nombre, // snapshot
+      nombreProducto: i.producto.nombre, 
       cantidad: i.cantidad,
-      precioUnitario: i.precioUnitario   // snapshot
+      precioUnitario: i.precioUnitario   
     }));
     return { cajero, tipo, detalles };
   }

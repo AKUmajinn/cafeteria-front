@@ -14,17 +14,15 @@ export class Checkout {
   readonly carrito = inject(CarritoService);
   private readonly pedidoService = inject(PedidoService);
 
-  // Datos de contacto (ngModel)
+
   nombre = '';
   telefono = '';
-  // Método de entrega -> tipo del pedido
   tipoEntrega = 'LLEVAR';
 
   readonly procesando = signal(false);
   readonly error = signal<string | null>(null);
   readonly mostrarModal = signal(false);
 
-  // Datos del pedido confirmado (para el modal)
   readonly pedidoId = signal<number | null>(null);
   readonly pedidoTotal = signal(0);
 
@@ -38,8 +36,7 @@ export class Checkout {
     this.procesando.set(true);
     this.error.set(null);
 
-    // En un sistema con login, el cajero saldría de la sesión. Para el pedido
-    // del cliente usamos su nombre (o un valor por defecto).
+
     const cajero = this.nombre.trim() || 'Cliente Web';
     const request = this.carrito.toPedidoRequest(cajero, this.tipoEntrega);
 
@@ -53,7 +50,6 @@ export class Checkout {
       },
       error: (err) => {
         this.procesando.set(false);
-        // Errores típicos: no hay turno abierto, precio que no coincide.
         this.error.set(
           err?.error?.mensaje ??
           'No se pudo procesar el pedido. Es posible que no haya un turno de caja abierto.'

@@ -1,22 +1,17 @@
-// Modelos espejados de las entidades/DTOs de ms-pedidos
-// Long de Java -> number | LocalDateTime -> string (ISO 8601)
-
-// ---------- Requests (lo que el front ENVÍA) ----------
-
 export interface DetalleRequest {
-  productoId: string;        // UUID del producto en ms-catalogo (referencia lógica)
-  nombreProducto: string;    // snapshot: nombre al momento de la venta
+  productoId: string;        //
+  nombreProducto: string;   
   cantidad: number;
-  precioUnitario: number;    // snapshot: precio al momento de la venta
+  precioUnitario: number;    
 }
 
 export interface PedidoRequest {
   cajero: string;
-  tipo: string;              // ej. 'LOCAL' | 'LLEVAR'
+  tipo: string;             
   detalles: DetalleRequest[];
 }
 
-// ---------- Responses (lo que el front RECIBE) ----------
+
 
 export interface DetallePedido {
   id: number;

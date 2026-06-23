@@ -1,0 +1,29 @@
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card p-4 rounded-4 shadow-sm" style="width: 100%; max-width: 400px;">
+    <h3 class="fw-bold text-center mb-4">Crear Cuenta</h3>
+    
+    <div class="mb-3">
+      <input [(ngModel)]="user.username" type="text" class="form-control py-2" placeholder="Usuario">
+    </div>
+    
+    <div class="mb-3">
+      <input [(ngModel)]="user.email" type="email" class="form-control py-2" placeholder="Correo electrónico">
+    </div>
+    
+    <div class="mb-3">
+      <input [(ngModel)]="user.telefono" type="tel" class="form-control py-2" placeholder="Teléfono/Celular">
+    </div>
+    
+    <div class="mb-3">
+      <input [(ngModel)]="user.password" type="password" class="form-control py-2" placeholder="Contraseña">
+    </div>
+    
+    <button (click)="onRegister()" class="btn btn-cafe w-100 rounded-pill py-2 fw-bold text-white" style="background-color: #3e2723;">
+      REGISTRARSE
+    </button>
+    
+    <p class="mt-3 text-center small">
+      ¿Ya tienes cuenta? <a routerLink="/login" class="text-cafe">Inicia sesión</a>
+    </p>
+  </div>
+</div>

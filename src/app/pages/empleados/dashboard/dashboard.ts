@@ -5,7 +5,7 @@ import { CatalogoService, Categoria } from '../../../services/catalogo.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule], // <-- Permite usar *ngFor en dashboard.html
+  imports: [CommonModule], 
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

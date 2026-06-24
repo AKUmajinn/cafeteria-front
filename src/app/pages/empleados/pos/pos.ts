@@ -5,7 +5,7 @@ import { CatalogoService, Categoria } from '../../../services/catalogo.service';
 @Component({
   selector: 'app-pos',
   standalone: true,
-  imports: [CommonModule], // <-- Permite usar *ngFor en pos.html
+  imports: [CommonModule], 
   templateUrl: './pos.html',
   styleUrl: './pos.css'
 })

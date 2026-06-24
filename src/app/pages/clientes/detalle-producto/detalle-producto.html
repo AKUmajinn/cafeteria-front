@@ -3,7 +3,6 @@
     <div class="col-md-10">
       <div class="bg-white p-5 rounded-4 shadow-sm row">
         
-        <!-- Imagen o Icono -->
         <div class="col-md-6 text-center d-flex align-items-center justify-content-center bg-light rounded-4 p-5">
           @if (producto.imagenUrl) {
             <img [src]="producto.imagenUrl" [alt]="producto.nombre" class="img-fluid rounded-4 shadow-sm" style="max-height: 300px; object-fit: cover;">
@@ -12,7 +11,6 @@
           }
         </div>
 
-        <!-- Información -->
         <div class="col-md-6 ps-md-5 mt-4 mt-md-0">
           <span class="badge bg-secondary mb-2">{{ producto.categoria.nombre }}</span>
           <h2 class="fw-bold mb-2">{{ producto.nombre }}</h2>
@@ -21,7 +19,6 @@
 
           <h6 class="fw-bold mb-3 text-uppercase">Opciones y Modificadores</h6>
 
-          <!-- Bucles de Modificadores -->
           @for (grupo of producto.gruposModificadores; track grupo.id) {
             <div class="mb-3">
               <label class="form-label fw-semibold">
@@ -51,9 +48,8 @@
             </div>
           }
 
-          <!-- Botón de Acción -->
           <div class="d-flex align-items-center gap-3 mt-4">
-            <button class="btn btn-cafe grow rounded-pill fw-semibold py-2">AÑADIR AL CARRITO</button>
+            <button class="btn btn-cafe grow rounded-pill fw-semibold py-2" (click)="agregarAlCarrito()">AÑADIR AL CARRITO</button>
           </div>
 
         </div>
@@ -61,14 +57,12 @@
     </div>
   </div>
 } @else if (cargando) {
-  <!-- SI CARGANDO ES TRUE, SOLO SE MUESTRA ESTO -->
   <div class="container text-center mt-5 py-5">
     <div class="spinner-border text-cafe" role="status">
       <span class="visually-hidden">Cargando...</span>
     </div>
   </div>
 } @else if (errorMensaje) {
-  <!-- SI HAY ERROR, SOLO SE MUESTRA ESTO -->
   <div class="container text-center mt-5 py-5">
     <div class="alert alert-danger d-inline-block">{{ errorMensaje }}</div>
   </div>

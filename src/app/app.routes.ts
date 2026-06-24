@@ -1,11 +1,58 @@
-import { Routes } from '@angular/router';
+import { Routes, CanActivateFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { ClienteLayout } from './layouts/cliente-layout/cliente-layout';
 import { EmpleadoLayout } from './layouts/empleado-layout/empleado-layout';
+import { LoginComponent } from './pages/auth/login/login.component';
+import { RegisterComponent } from './pages/auth/register/register.component';
+import { WelcomeComponent } from './pages/welcome/welcome.component';
+
+
+const adminGuard: CanActivateFn = () => {
+  const router = inject(Router);
+  const role = localStorage.getItem('role');
+  const token = localStorage.getItem('token');
+
+
+  if (!token) {
+    router.navigate(['/login']);
+    return false;
+  }
+
+
+  if (role !== 'ROLE_ADMIN') {
+    alert('Acceso denegado: No tienes permisos de administrador.');
+    router.navigate(['/clientes/inicio']);
+    return false;
+  }
+
+ 
+  return true;
+};
+
+
+const userGuard: CanActivateFn = () => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    return true;
+  }
+  inject(Router).navigate(['/']); 
+  return false;
+};
 
 export const routes: Routes = [
+
+  { path: '', component: WelcomeComponent, pathMatch: 'full' },
+
+
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+
+
   {
     path: 'clientes',
     component: ClienteLayout,
+    canActivate: [userGuard], 
     children: [
       { path: '', redirectTo: 'inicio', pathMatch: 'full' },
       { 
@@ -30,9 +77,12 @@ export const routes: Routes = [
       }
     ]
   },
+
+
   {
     path: 'empleados',
     component: EmpleadoLayout,
+    canActivate: [adminGuard],
     children: [
       { path: '', redirectTo: 'pos', pathMatch: 'full' },
       { 
@@ -53,6 +103,7 @@ export const routes: Routes = [
       }
     ]
   },
-  { path: '', redirectTo: 'clientes/inicio', pathMatch: 'full' },
-  { path: '**', redirectTo: 'clientes/inicio' }
+
+
+  { path: '**', redirectTo: '' }
 ];

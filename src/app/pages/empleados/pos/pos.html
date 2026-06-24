@@ -1,138 +1,136 @@
 <div class="row" style="min-height: 80vh;">
-  
+
   <div class="col-lg-2">
-    <h5 class="fw-bold mb-4 text-uppercase">Categorías</h5>
-    <div class="d-flex flex-column gap-3">
-      <button *ngFor="let cat of categorias" class="btn bg-white text-dark text-start py-3 px-4 rounded-4 shadow-sm border-0 d-flex align-items-center w-100">
-        <i class="bi bi-cup-hot fs-4 me-3 text-cafe"></i> 
-        <span class="fw-bold text-uppercase">{{ cat.nombre }}</span>
-      </button>
+    <h5 class="fw-bold mb-4 text-uppercase">Filtros</h5>
+    
+    <div class="mb-4">
+      <h6 class="fw-semibold small text-muted mb-3">CATEGORÍAS</h6>
+      <div class="d-flex flex-column gap-2">
+        <button class="btn text-start py-2 px-3 rounded-3 fw-bold transition-hover"
+                [class.btn-cafe]="categoriaSeleccionada === ''"
+                [class.bg-white]="categoriaSeleccionada !== ''"
+                [class.text-dark]="categoriaSeleccionada !== ''"
+                [class.shadow-sm]="categoriaSeleccionada !== ''"
+                (click)="seleccionarCategoria('')">
+          Todos
+        </button>
+        @for (cat of categorias(); track cat.id) {
+          <button class="btn text-start py-2 px-3 rounded-3 fw-bold transition-hover"
+                  [class.btn-cafe]="categoriaSeleccionada === cat.id"
+                  [class.bg-white]="categoriaSeleccionada !== cat.id"
+                  [class.text-dark]="categoriaSeleccionada !== cat.id"
+                  [class.shadow-sm]="categoriaSeleccionada !== cat.id"
+                  (click)="seleccionarCategoria(cat.id)">
+            {{ cat.nombre }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label fw-semibold small text-muted d-flex justify-content-between">
+        <span>PRECIO MÁX.</span>
+        <span class="text-cafe fw-bold">${{ precioMax | number:'1.2-2' }}</span>
+      </label>
+      <input type="range" class="form-range" min="1" max="50" step="1" [(ngModel)]="precioMax" (change)="aplicarFiltros()">
     </div>
   </div>
 
   <div class="col-lg-7 border-start border-end px-4">
-    <h5 class="fw-bold mb-4 text-uppercase">Productos</h5>
-    <div class="row g-3">
-      
-      <div class="col-md-4">
-        <div class="bg-white p-3 rounded-4 shadow-sm text-center d-flex flex-column h-100">
-          <div class="bg-light rounded-3 py-3 mb-2">
-            <i class="bi bi-cup-hot text-cafe fs-1"></i>
-          </div>
-          <h6 class="fw-bold mb-2">Latte</h6>
-          <div class="mt-auto d-flex justify-content-center gap-2">
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-plus"></i></button>
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-dash"></i></button>
-          </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h5 class="fw-bold text-uppercase m-0">Productos</h5>
+      <div class="w-50">
+        <div class="input-group shadow-sm rounded-pill overflow-hidden">
+          <span class="input-group-text bg-white border-0 ps-3">
+            <i class="bi bi-search"></i>
+          </span>
+          <input type="text" class="form-control border-0 shadow-none py-2" placeholder="Buscar producto..." [(ngModel)]="terminoBusqueda" (keyup)="aplicarFiltros()">
         </div>
       </div>
-
-      <div class="col-md-4">
-        <div class="bg-white p-3 rounded-4 shadow-sm text-center d-flex flex-column h-100">
-          <div class="bg-light rounded-3 py-3 mb-2">
-            <i class="bi bi-cup text-cafe fs-1"></i>
-          </div>
-          <h6 class="fw-bold mb-2">Capuccino</h6>
-          <div class="mt-auto d-flex justify-content-center gap-2">
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-plus"></i></button>
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-dash"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="bg-white p-3 rounded-4 shadow-sm text-center d-flex flex-column h-100">
-          <div class="bg-light rounded-3 py-3 mb-2">
-            <i class="bi bi-bag-heart text-cafe fs-1"></i>
-          </div>
-          <h6 class="fw-bold mb-2">Muffin</h6>
-          <div class="mt-auto d-flex justify-content-center gap-2">
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-plus"></i></button>
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-dash"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="bg-white p-3 rounded-4 shadow-sm text-center d-flex flex-column h-100">
-          <div class="bg-light rounded-3 py-3 mb-2">
-            <i class="bi bi-cup-hot text-cafe fs-1"></i>
-          </div>
-          <h6 class="fw-bold mb-2">Latte</h6>
-          <div class="mt-auto d-flex justify-content-center gap-2">
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-plus"></i></button>
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-dash"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="bg-white p-3 rounded-4 shadow-sm text-center d-flex flex-column h-100">
-          <div class="bg-light rounded-3 py-3 mb-2">
-            <i class="bi bi-cake2 text-cafe fs-1"></i>
-          </div>
-          <h6 class="fw-bold mb-2">Sándwich</h6>
-          <div class="mt-auto d-flex justify-content-center gap-2">
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-plus"></i></button>
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-dash"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="bg-white p-3 rounded-4 shadow-sm text-center d-flex flex-column h-100">
-          <div class="bg-light rounded-3 py-3 mb-2">
-            <i class="bi bi-cake2 text-cafe fs-1"></i>
-          </div>
-          <h6 class="fw-bold mb-2">Sándwich</h6>
-          <div class="mt-auto d-flex justify-content-center gap-2">
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-plus"></i></button>
-            <button class="btn btn-sm btn-light border rounded-circle px-2 fw-bold"><i class="bi bi-dash"></i></button>
-          </div>
-        </div>
-      </div>
-
     </div>
+
+    @if (cargando()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-cafe" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    } @else if (productos().length === 0) {
+      <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+        <i class="bi bi-search text-muted mb-3 d-block" style="font-size: 3rem;"></i>
+        <h5 class="fw-bold text-dark">No se encontraron productos</h5>
+        <p class="text-muted mb-0">Intenta buscar con otras palabras o cambiar los filtros.</p>
+      </div>
+    } @else {
+      <div class="row g-3">
+        @for (p of productos(); track p.id) {
+          <div class="col-md-4">
+            <div class="bg-white p-3 rounded-4 shadow-sm text-center d-flex flex-column h-100 transition-hover">
+              <div class="bg-light rounded-3 py-3 mb-2">
+                <i class="bi bi-cup-hot text-cafe fs-1"></i>
+              </div>
+              <h6 class="fw-bold mb-1">{{ p.nombre }}</h6>
+              <p class="text-muted mb-2">${{ p.precioBase | number:'1.2-2' }}</p>
+              <div class="mt-auto">
+                <button
+                  class="btn btn-sm btn-cafe rounded-pill px-3 fw-bold w-100"
+                  (click)="agregar(p)">
+                  <i class="bi bi-plus"></i> Agregar
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
   </div>
 
   <div class="col-lg-3">
     <h5 class="fw-bold mb-4 text-uppercase">Ticket Actual</h5>
     <div class="bg-white p-4 rounded-4 shadow-sm d-flex flex-column" style="height: calc(100% - 2.5rem);">
-      
-      <div class="grow overflow-auto pe-2">
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <span class="fw-semibold">Latte</span>
-          <span class="text-muted">1</span>
-          <span class="fw-bold">$3.50</span>
+
+      @if (mensaje()) {
+        <div class="alert rounded-3 py-2 px-3 small"
+             [class.alert-success]="!mensajeEsError()"
+             [class.alert-warning]="mensajeEsError()">
+          {{ mensaje() }}
         </div>
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <span class="fw-semibold">Capuccino</span>
-          <span class="text-muted">1</span>
-          <span class="fw-bold">$1.50</span>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <span class="fw-semibold">Café</span>
-          <span class="text-muted">1</span>
-          <span class="fw-bold">$2.00</span>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <span class="fw-semibold">Postres</span>
-          <span class="text-muted">1</span>
-          <span class="fw-bold">$1.50</span>
-        </div>
+      }
+
+      <div class="grow overflow-auto pe-2" style="flex-grow: 1;">
+        @if (carrito.items().length === 0) {
+          <p class="text-muted text-center my-4">El ticket está vacío.</p>
+        } @else {
+          @for (item of carrito.items(); track item.producto.id) {
+            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+              <span class="fw-semibold flex-grow-1">{{ item.producto.nombre }}</span>
+              <div class="d-flex align-items-center gap-1 mx-2">
+                <button class="btn btn-sm btn-link text-dark p-0"
+                        (click)="carrito.cambiarCantidad(item.producto.id, item.cantidad - 1)">
+                  <i class="bi bi-dash-circle"></i>
+                </button>
+                <span class="text-muted">{{ item.cantidad }}</span>
+                <button class="btn btn-sm btn-link text-dark p-0"
+                        (click)="carrito.cambiarCantidad(item.producto.id, item.cantidad + 1)">
+                  <i class="bi bi-plus-circle"></i>
+                </button>
+              </div>
+              <span class="fw-bold">${{ (item.precioUnitario * item.cantidad) | number:'1.2-2' }}</span>
+            </div>
+          }
+        }
       </div>
 
       <div class="mt-4 pt-3 border-top">
-        <div class="d-flex justify-content-between mb-2">
-          <span class="text-muted fw-semibold">Subtotal</span>
-          <span class="fw-bold">$15.50</span>
-        </div>
         <div class="d-flex justify-content-between mb-4 bg-light p-3 rounded-3">
           <span class="fw-bold fs-5">Total</span>
-          <span class="fw-bold fs-5 text-cafe">$15.50</span>
+          <span class="fw-bold fs-5 text-cafe">${{ carrito.total() | number:'1.2-2' }}</span>
         </div>
-        <button class="btn btn-cafe w-100 py-3 rounded-pill fw-bold fs-6 shadow-sm">
-          PROCESAR PEDIDO
+        <button
+          class="btn btn-cafe w-100 py-3 rounded-pill fw-bold fs-6 shadow-sm"
+          (click)="procesarPedido()"
+          [disabled]="procesando() || carritoVacio()">
+          {{ procesando() ? 'PROCESANDO…' : 'PROCESAR PEDIDO' }}
         </button>
       </div>
 

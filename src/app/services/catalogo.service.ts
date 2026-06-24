@@ -1,37 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface ItemModificador {
-  id: string;
-  nombre: string;
-  precioAdicional: number;
-}
-
-export interface GrupoModificador {
-  id: string;
-  nombre: string;
-  esObligatorio: boolean;
-  items: ItemModificador[];
-}
-
-export interface Categoria {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  estado: string;
-}
-
-export interface Producto {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  precioBase: number;
-  imagenUrl: string;
-  estado: string;
-  categoria: Categoria;
-  gruposModificadores: GrupoModificador[];
-}
+import { Producto, Categoria } from '../core/models/catalogo.models';
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +11,6 @@ export class CatalogoService {
 
   constructor(private http: HttpClient) {}
 
-  // Resuelve el error de 'getProductoPorId' y tipa la respuesta para eliminar el tipo 'any' implícito
   getProductoPorId(id: string): Observable<Producto> {
     return this.http.get<Producto>(`${this.apiUrl}/${id}`);
   }
@@ -50,8 +19,42 @@ export class CatalogoService {
     return this.http.get<Categoria[]>(`${this.apiUrl}/categorias`);
   }
 
+  crearCategoria(categoria: any): Observable<Categoria> {
+    return this.http.post<Categoria>(`${this.apiUrl}/categorias`, categoria);
+  }
+
+  actualizarCategoria(id: string, categoria: any): Observable<Categoria> {
+    return this.http.put<Categoria>(`${this.apiUrl}/categorias/${id}`, categoria);
+  }
+
+  listarProductos(filtros?: { nombre?: string, categoriaId?: string, precioMin?: number, precioMax?: number }): Observable<Producto[]> {
+    let params = new HttpParams();
+    
+    if (filtros?.categoriaId) {
+      params = params.set('categoriaId', filtros.categoriaId);
+    }
+    if (filtros?.nombre) {
+      params = params.set('nombre', filtros.nombre);
+    }
+    if (filtros?.precioMin !== undefined && filtros?.precioMin !== null) {
+      params = params.set('precioMin', filtros.precioMin.toString());
+    }
+    if (filtros?.precioMax !== undefined && filtros?.precioMax !== null) {
+      params = params.set('precioMax', filtros.precioMax.toString());
+    }
+
+    return this.http.get<Producto[]>(`${this.apiUrl}/productos`, { params });
+  }
+
+  crearProducto(producto: any): Observable<Producto> {
+    return this.http.post<Producto>(`${this.apiUrl}/productos`, producto);
+  }
+
+  actualizarProducto(id: string, producto: any): Observable<Producto> {
+    return this.http.put<Producto>(`${this.apiUrl}/productos/${id}`, producto);
+  }
+
   eliminarProducto(id: string): Observable<string> {
-  // Configura responseType como 'text' para evitar que Angular falle al recibir un cuerpo vacío
-  return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
+    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }
 }

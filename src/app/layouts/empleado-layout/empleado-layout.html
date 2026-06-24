@@ -8,8 +8,8 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse justify-content-center" id="navEmpleados">
-      <ul class="navbar-nav gap-4">
+    <div class="collapse navbar-collapse justify-content-between" id="navEmpleados">
+      <ul class="navbar-nav mx-auto gap-4">
         <li class="nav-item">
           <a class="nav-link text-uppercase fw-semibold" routerLink="/empleados/pos" routerLinkActive="border-bottom border-2 border-dark text-dark">PEDIDOS</a>
         </li>
@@ -23,6 +23,12 @@
           <a class="nav-link text-uppercase fw-semibold" routerLink="/empleados/historial" routerLinkActive="border-bottom border-2 border-dark text-dark">HISTORIAL</a>
         </li>
       </ul>
+
+      <div class="d-flex">
+        <button (click)="logout()" class="btn btn-outline-danger btn-sm rounded-pill px-4">
+          <i class="bi bi-box-arrow-right me-2"></i>SALIR
+        </button>
+      </div>
     </div>
   </div>
 </nav>

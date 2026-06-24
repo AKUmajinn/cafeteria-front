@@ -1,72 +1,59 @@
 <div class="row mt-4 justify-content-center">
   <div class="col-xl-10">
     <h3 class="fw-bold mb-4">CONFIRMAR Y PAGAR</h3>
-    
+
+    @if (error()) {
+      <div class="alert alert-warning rounded-3">{{ error() }}</div>
+    }
+
     <div class="row">
       <div class="col-lg-7">
         <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
           <h5 class="fw-bold mb-3 text-uppercase fs-6">Datos de Contacto</h5>
-          
           <div class="mb-3">
             <label class="form-label fw-semibold">Nombre</label>
-            <input type="text" class="form-control border-0 bg-light py-2">
+            <input type="text" class="form-control border-0 bg-light py-2" [(ngModel)]="nombre" name="nombre">
           </div>
-          
           <div class="mb-2">
             <label class="form-label fw-semibold">Teléfono</label>
-            <input type="tel" class="form-control border-0 bg-light py-2">
+            <input type="tel" class="form-control border-0 bg-light py-2" [(ngModel)]="telefono" name="telefono">
           </div>
         </div>
 
         <div class="bg-white p-4 rounded-4 shadow-sm">
           <h5 class="fw-bold mb-3 text-uppercase fs-6">Método de Entrega</h5>
-          
-          <div class="form-check p-3 rounded-3 border bg-light mb-2 d-flex align-items-center">
-            <input class="form-check-input ms-0 me-3" type="radio" name="entrega" id="paraLlevar" checked>
-            <label class="form-check-label fw-semibold d-flex align-items-center gap-2" for="paraLlevar">
-              <i class="bi bi-bag-takeout fs-5"></i> Para llevar
-            </label>
-          </div>
 
-          <div class="form-check p-3 rounded-3 border bg-light mb-2 d-flex align-items-center">
-            <input class="form-check-input ms-0 me-3" type="radio" name="entrega" id="consumoLocal">
-            <label class="form-check-label fw-semibold d-flex align-items-center gap-2" for="consumoLocal">
-              <i class="bi bi-shop fs-5"></i> Consumo local
-            </label>
-          </div>
+          <label class="form-check p-3 rounded-3 border bg-light mb-2 d-flex align-items-center" style="cursor:pointer;">
+            <input class="form-check-input ms-0 me-3" type="radio" name="entrega" value="LLEVAR" [(ngModel)]="tipoEntrega">
+            <span class="fw-semibold d-flex align-items-center gap-2"><i class="bi bi-bag fs-5"></i> Para llevar</span>
+          </label>
 
-          <div class="form-check p-3 rounded-3 border bg-light d-flex align-items-center">
-            <input class="form-check-input ms-0 me-3" type="radio" name="entrega" id="entregaMesa">
-            <label class="form-check-label fw-semibold d-flex align-items-center gap-2 w-100" for="entregaMesa">
-              <i class="bi bi-geo-alt fs-5"></i> Entrega mesa #
-              <input type="text" class="form-control form-control-sm border-0 border-bottom bg-transparent rounded-0 p-0 text-center ms-2" style="width: 50px;">
-            </label>
-          </div>
+          <label class="form-check p-3 rounded-3 border bg-light mb-2 d-flex align-items-center" style="cursor:pointer;">
+            <input class="form-check-input ms-0 me-3" type="radio" name="entrega" value="LOCAL" [(ngModel)]="tipoEntrega">
+            <span class="fw-semibold d-flex align-items-center gap-2"><i class="bi bi-shop fs-5"></i> Consumo local</span>
+          </label>
+
+          <label class="form-check p-3 rounded-3 border bg-light d-flex align-items-center" style="cursor:pointer;">
+            <input class="form-check-input ms-0 me-3" type="radio" name="entrega" value="MESA" [(ngModel)]="tipoEntrega">
+            <span class="fw-semibold d-flex align-items-center gap-2"><i class="bi bi-geo-alt fs-5"></i> Entrega en mesa</span>
+          </label>
         </div>
       </div>
 
       <div class="col-lg-5 mt-4 mt-lg-0">
         <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
           <h5 class="fw-bold mb-3 text-uppercase fs-6">Método de Pago</h5>
-          
+          <!-- El pago no lo procesa el backend todavía; queda visual -->
           <div class="form-check p-3 rounded-3 border bg-light mb-2 d-flex align-items-center">
             <input class="form-check-input ms-0 me-3" type="radio" name="pago" id="tarjeta" checked>
             <label class="form-check-label fw-semibold d-flex align-items-center gap-2" for="tarjeta">
               <i class="bi bi-credit-card fs-5"></i> Tarjeta
             </label>
           </div>
-
-          <div class="form-check p-3 rounded-3 border bg-light mb-2 d-flex align-items-center">
+          <div class="form-check p-3 rounded-3 border bg-light d-flex align-items-center">
             <input class="form-check-input ms-0 me-3" type="radio" name="pago" id="efectivo">
             <label class="form-check-label fw-semibold d-flex align-items-center gap-2" for="efectivo">
               <i class="bi bi-cash-stack fs-5"></i> Efectivo
-            </label>
-          </div>
-
-          <div class="form-check p-3 rounded-3 border bg-light d-flex align-items-center">
-            <input class="form-check-input ms-0 me-3" type="radio" name="pago" id="pagoDigital">
-            <label class="form-check-label fw-semibold d-flex align-items-center gap-2" for="pagoDigital">
-              <i class="bi bi-qr-code-scan fs-5"></i> Pago digital
             </label>
           </div>
         </div>
@@ -75,11 +62,15 @@
           <h5 class="fw-bold mb-3 text-uppercase fs-6">Resumen Final</h5>
           <div class="d-flex justify-content-between align-items-center mb-4">
             <span class="text-muted fw-semibold">TOTAL A PAGAR</span>
-            <span class="fw-bold fs-3 text-cafe">$17.75</span>
+            <span class="fw-bold fs-3 text-cafe">${{ carrito.total() | number:'1.2-2' }}</span>
           </div>
-          
-          <button class="btn btn-cafe w-100 rounded-pill fw-bold py-3 d-flex align-items-center justify-content-center gap-2" (click)="procesarPedido()">
-            <i class="bi bi-lock-fill"></i> PROCESAR PEDIDO
+
+          <button
+            class="btn btn-cafe w-100 rounded-pill fw-bold py-3 d-flex align-items-center justify-content-center gap-2"
+            (click)="procesarPedido()"
+            [disabled]="procesando() || carritoVacio()">
+            <i class="bi bi-lock-fill"></i>
+            {{ procesando() ? 'PROCESANDO…' : 'PROCESAR PEDIDO' }}
           </button>
         </div>
       </div>
@@ -87,30 +78,34 @@
   </div>
 </div>
 
-<div class="modal fade" [ngClass]="{'show': mostrarModal}" [ngStyle]="{'display': mostrarModal ? 'block' : 'none', 'background-color': 'rgba(0,0,0,0.6)'}" tabindex="-1">
+<!-- Modal de confirmación con datos reales del pedido -->
+<div class="modal fade"
+     [class.show]="mostrarModal()"
+     [style.display]="mostrarModal() ? 'block' : 'none'"
+     [style.background-color]="'rgba(0,0,0,0.6)'"
+     tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content rounded-4 border-0 p-2">
       <div class="modal-body text-center p-5">
         <i class="bi bi-check-circle-fill text-success mb-3" style="font-size: 5rem;"></i>
         <h3 class="fw-bold mb-2">¡Pedido Confirmado!</h3>
-        <p class="text-muted mb-4">Tu orden <span class="fw-bold text-dark">#105</span> ha sido recibida.</p>
-        
+        <p class="text-muted mb-4">
+          Tu orden <span class="fw-bold text-dark">#{{ pedidoId() }}</span> ha sido recibida.
+        </p>
+
         <div class="bg-light p-3 rounded-3 mb-4 text-start small">
           <div class="d-flex justify-content-between mb-2">
             <span class="fw-semibold">Entrega:</span>
-            <span>Para llevar</span>
-          </div>
-          <div class="d-flex justify-content-between mb-2">
-            <span class="fw-semibold">Pago:</span>
-            <span>Tarjeta</span>
+            <span>{{ etiquetaEntrega() }}</span>
           </div>
           <div class="d-flex justify-content-between pt-2 border-top mt-2">
             <span class="fw-semibold">Total:</span>
-            <span class="fw-bold text-cafe">$17.75</span>
+            <span class="fw-bold text-cafe">${{ pedidoTotal() | number:'1.2-2' }}</span>
           </div>
         </div>
 
-        <button class="btn btn-cafe w-100 rounded-pill py-2 fw-bold" routerLink="/clientes/inicio" (click)="cerrarModal()">
+        <button class="btn btn-cafe w-100 rounded-pill py-2 fw-bold"
+                routerLink="/clientes/inicio" (click)="cerrarModal()">
           VOLVER AL INICIO
         </button>
       </div>

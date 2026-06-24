@@ -1,128 +1,169 @@
-<div class="row h-100">
-  <div class="col-lg-7 pe-lg-4">
+<div class="row pb-4">
+  <div class="col-lg-8 pe-lg-4 mb-4 mb-lg-0">
     <h4 class="fw-bold mb-4">MANTENIMIENTO DE CATÁLOGO</h4>
     
-    <div class="input-group bg-white rounded-3 shadow-sm mb-4">
-      <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-      <input type="text" class="form-control border-0 bg-transparent py-2" placeholder="Buscar...">
+    <div class="bg-white p-4 rounded-4 shadow-sm mb-4">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-5">
+          <label class="form-label fw-semibold small text-muted">Buscar Producto</label>
+          <div class="input-group bg-light rounded-3">
+            <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control border-0 bg-transparent py-2" placeholder="Escribe un nombre..." [(ngModel)]="terminoBusqueda" (keyup)="aplicarFiltros()">
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <label class="form-label fw-semibold small text-muted">Categoría</label>
+          <select class="form-select bg-light border-0 py-2" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()">
+            <option value="">Todas</option>
+            @for (cat of categorias; track cat.id) {
+              <option [value]="cat.id">{{ cat.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-semibold small text-muted d-flex justify-content-between">
+            <span>Precio Máx.</span>
+            <span class="text-cafe fw-bold">${{ precioMax | number:'1.2-2' }}</span>
+          </label>
+          <input type="range" class="form-range" min="1" max="50" step="1" [(ngModel)]="precioMax" (change)="aplicarFiltros()">
+        </div>
+      </div>
     </div>
 
-    <div class="row g-3 mb-4">
-      <div class="col-md-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center">
-          <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
-            <i class="bi bi-cup-hot text-cafe fs-3"></i>
-          </div>
-          <div class="grow">
-            <h6 class="fw-bold mb-1">Latte</h6>
-            <p class="text-cafe fw-bold mb-2">$4.50</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
-              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="bi bi-trash"></i> Eliminar</button>
-            </div>
-          </div>
+    @if (cargando()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-cafe" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden"></span>
         </div>
       </div>
-
-      <div class="col-md-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center">
-          <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
-            <i class="bi bi-bag-heart text-cafe fs-3"></i>
-          </div>
-          <div class="grow">
-            <h6 class="fw-bold mb-1">Muffin</h6>
-            <p class="text-cafe fw-bold mb-2">$3.00</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
-              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="bi bi-trash"></i> Eliminar</button>
+    } @else if (productos().length === 0) {
+      <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+        <i class="bi bi-box-seam text-muted mb-3 d-block" style="font-size: 3rem;"></i>
+        <h5 class="fw-bold text-dark">No se encontraron productos</h5>
+        <p class="text-muted mb-0">No hay productos que coincidan con la búsqueda o filtros actuales.</p>
+      </div>
+    } @else {
+      <div class="row g-3">
+        @for (p of productos(); track p.id) {
+          <div class="col-md-6">
+            <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center h-100 transition-hover" [class.border]="productoEnEdicionId === p.id" [class.border-dark]="productoEnEdicionId === p.id">
+              <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
+                <i class="bi bi-cup-hot text-cafe fs-3"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h6 class="fw-bold mb-1">{{ p.nombre }}</h6>
+                <p class="text-cafe fw-bold mb-2">${{ p.precioBase | number:'1.2-2' }}</p>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-outline-dark rounded-pill px-3" (click)="cargarParaEditar(p)">
+                    <i class="bi bi-pencil"></i> Editar
+                  </button>
+                  <button (click)="eliminarProducto(p.id)" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                    <i class="bi bi-trash"></i> Eliminar
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
-
-      <div class="col-md-6">
-        <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center">
-          <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
-            <i class="bi bi-cake2 text-cafe fs-3"></i>
-          </div>
-          <div class="grow">
-            <h6 class="fw-bold mb-1">Sándwich</h6>
-            <p class="text-cafe fw-bold mb-2">$5.50</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
-              <button class="btn btn-sm btn-outline-danger rounded-pill px-3"><i class="bi bi-trash"></i> Eliminar</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6" *ngIf="productoTest">
-        <div class="bg-white p-3 rounded-4 shadow-sm d-flex align-items-center">
-          <div class="bg-light p-3 rounded-3 me-3 text-center" style="width: 70px;">
-            <i class="bi bi-cup text-cafe fs-3"></i>
-          </div>
-          <div class="grow">
-            <h6 class="fw-bold mb-1">{{ productoTest.nombre }}</h6>
-            <p class="text-cafe fw-bold mb-2">S/ {{ productoTest.precioBase | number:'1.2-2' }}</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-dark rounded-pill px-3"><i class="bi bi-pencil"></i> Editar</button>
-              <button (click)="eliminarProducto(productoTest.id)" class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                <i class="bi bi-trash"></i> Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> <nav class="d-flex justify-content-center">
-      <ul class="pagination pagination-sm shadow-sm">
-        <li class="page-item"><a class="page-link text-dark" href="javascript:void(0)"><i class="bi bi-chevron-left"></i></a></li>
-        <li class="page-item active"><a class="page-link bg-cafe border-0" href="javascript:void(0)">1</a></li>
-        <li class="page-item"><a class="page-link text-dark" href="javascript:void(0)">2</a></li>
-        <li class="page-item"><a class="page-link text-dark" href="javascript:void(0)">3</a></li>
-        <li class="page-item"><a class="page-link text-dark" href="javascript:void(0)"><i class="bi bi-chevron-right"></i></a></li>
-      </ul>
-    </nav>
+    }
   </div>
 
-  <div class="col-lg-2 border-start px-lg-4 mt-4 mt-lg-0">
-    <h6 class="fw-bold mb-3 text-uppercase">Filtros:</h6>
+  <div class="col-lg-4 border-start px-lg-4 pb-4" style="max-height: 85vh; overflow-y: auto; position: sticky; top: 20px;">
     
-    <div class="mb-4">
-      <label class="form-label fw-semibold small">Categoría</label>
-      <select class="form-select bg-white shadow-sm border-0 py-2">
-        <option value="">Todas</option>
-        <option *ngFor="let cat of categorias" [value]="cat.id">
-          {{ cat.nombre }}
-        </option>
-      </select>
-    </div>
-
-    <div class="mb-4">
-      <label class="form-label fw-semibold small">Rango Precio</label>
-      <input type="range" class="form-range" min="0" max="100">
-    </div>
-  </div>
-
-  <div class="col-lg-3 border-start px-lg-4 mt-4 mt-lg-0">
-    <div class="bg-white p-4 rounded-4 shadow-sm h-100">
-      <h5 class="fw-bold mb-4">AÑADIR PRODUCTO</h5>
-      
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Nombre</label>
-        <input type="text" class="form-control bg-light border-0 py-2">
+    <div class="bg-white p-0 rounded-4 shadow-sm mb-4">
+      <div class="p-4 d-flex justify-content-between align-items-center" (click)="mostrarFormProducto = !mostrarFormProducto" style="cursor: pointer;">
+        <h6 class="fw-bold mb-0 text-uppercase">{{ productoEnEdicionId ? 'EDITAR PRODUCTO' : 'AÑADIR PRODUCTO' }}</h6>
+        <i class="bi fs-5" [class.bi-chevron-down]="!mostrarFormProducto" [class.bi-chevron-up]="mostrarFormProducto"></i>
       </div>
       
-      <div class="mb-3">
-        <label class="form-label fw-semibold">Precio</label>
-        <input type="text" class="form-control bg-light border-0 py-2">
-      </div>
-      
-      <div class="mb-4">
-        <label class="form-label fw-semibold">Descripción</label>
-        <textarea class="form-control bg-light border-0" rows="4"></textarea>
+      @if (mostrarFormProducto) {
+        <div class="p-4 pt-0 border-top mt-3">
+          <div class="mb-3 pt-2">
+            <label class="form-label fw-semibold">Nombre *</label>
+            <input type="text" class="form-control bg-light border-0 py-2" [(ngModel)]="formularioProducto.nombre">
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-md-7">
+              <label class="form-label fw-semibold">Categoría *</label>
+              <select class="form-select bg-light border-0 py-2" [(ngModel)]="formularioProducto.categoriaId">
+                <option value="">Seleccionar...</option>
+                @for (cat of categorias; track cat.id) {
+                  <option [value]="cat.id">{{ cat.nombre }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label fw-semibold">Precio *</label>
+              <input type="number" class="form-control bg-light border-0 py-2" [(ngModel)]="formularioProducto.precioBase">
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea class="form-control bg-light border-0" rows="3" [(ngModel)]="formularioProducto.descripcion"></textarea>
+          </div>
+
+          <div class="d-flex flex-column gap-2">
+            <button class="btn w-100 rounded-pill fw-bold py-2" 
+                    [class.btn-cafe]="!productoEnEdicionId"
+                    [class.btn-dark]="productoEnEdicionId"
+                    (click)="guardarProducto()" 
+                    [disabled]="guardando">
+              {{ guardando ? 'GUARDANDO...' : (productoEnEdicionId ? 'ACTUALIZAR' : 'AÑADIR') }}
+            </button>
+            
+            @if (productoEnEdicionId) {
+              <button class="btn btn-outline-danger w-100 rounded-pill fw-bold py-2" (click)="cancelarEdicion()" [disabled]="guardando">
+                CANCELAR
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="bg-white p-0 rounded-4 shadow-sm mb-4">
+      <div class="p-4 d-flex justify-content-between align-items-center" (click)="mostrarFormCategoria = !mostrarFormCategoria" style="cursor: pointer;">
+        <h6 class="fw-bold mb-0 text-uppercase">Gestión de Categorías</h6>
+        <i class="bi fs-5" [class.bi-chevron-down]="!mostrarFormCategoria" [class.bi-chevron-up]="mostrarFormCategoria"></i>
       </div>
 
-      <button class="btn btn-cafe w-100 rounded-pill fw-bold py-2 mt-auto">AÑADIR</button>
+      @if (mostrarFormCategoria) {
+        <div class="p-4 pt-0 border-top mt-3">
+          <div class="d-flex flex-column gap-2 mb-4 pt-2">
+            @for (cat of categorias; track cat.id) {
+              <div class="d-flex justify-content-between align-items-center bg-light p-2 rounded-3 border-start border-4" [class.border-dark]="categoriaEnEdicionId === cat.id">
+                <span class="small fw-semibold text-truncate ms-2">{{ cat.nombre }}</span>
+                <button class="btn btn-link text-dark p-0 me-1" (click)="cargarParaEditarCategoria(cat)">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+              </div>
+            }
+          </div>
+
+          <div class="bg-light p-3 rounded-4">
+            <h6 class="fw-bold mb-3 text-uppercase small">{{ categoriaEnEdicionId ? 'Editar Categoría' : 'Añadir Categoría' }}</h6>
+            <input type="text" class="form-control form-control-sm bg-white border-0 mb-2 py-2" placeholder="Nombre" [(ngModel)]="formularioCategoria.nombre">
+            <textarea class="form-control form-control-sm bg-white border-0 mb-3" placeholder="Descripción" rows="2" [(ngModel)]="formularioCategoria.descripcion"></textarea>
+            
+            <div class="d-flex flex-column gap-2">
+              <button class="btn btn-cafe btn-sm w-100 rounded-pill fw-bold py-2" (click)="guardarCategoria()" [disabled]="guardandoCategoria">
+                {{ guardandoCategoria ? 'GUARDANDO...' : (categoriaEnEdicionId ? 'ACTUALIZAR' : 'AÑADIR') }}
+              </button>
+              @if (categoriaEnEdicionId) {
+                <button class="btn btn-outline-danger btn-sm w-100 rounded-pill fw-bold py-2" (click)="cancelarEdicionCategoria()" [disabled]="guardandoCategoria">
+                  CANCELAR
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
     </div>
+
   </div>
 </div>

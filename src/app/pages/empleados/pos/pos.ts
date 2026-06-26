@@ -25,6 +25,9 @@ export class Pos implements OnInit {
   categoriaSeleccionada: string = '';
   terminoBusqueda: string = '';
   precioMax: number = 50;
+  
+
+  tipoOrden: string = 'Local'; 
 
   readonly procesando = signal(false);
   readonly mensaje = signal<string | null>(null);
@@ -81,11 +84,15 @@ export class Pos implements OnInit {
     this.procesando.set(true);
     this.mensaje.set(null);
 
-    const request = this.carrito.toPedidoRequest(this.cajero, 'LOCAL');
+
+    const request = this.carrito.toPedidoRequest(this.cajero, this.tipoOrden);
+    
     this.pedidoService.crearPedido(request).subscribe({
       next: (pedido) => {
         this.procesando.set(false);
         this.carrito.vaciar();
+
+        this.tipoOrden = 'Local'; 
         this.mostrarMensaje(
           `Pedido #${pedido.id} creado. Total: $${pedido.total.toFixed(2)}`,
           false

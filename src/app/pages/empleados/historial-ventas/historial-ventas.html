@@ -8,10 +8,11 @@
         <input type="text" class="form-control border-0 bg-transparent py-2" 
                placeholder="Buscar por ID o Cajero..." [(ngModel)]="terminoBusqueda">
       </div>
+      
       <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-3 shadow-sm">
-        <input type="date" class="form-control border-0 bg-transparent form-control-sm">
+        <input type="date" class="form-control border-0 bg-transparent form-control-sm" [(ngModel)]="fechaInicio">
         <span class="fw-bold">-</span>
-        <input type="date" class="form-control border-0 bg-transparent form-control-sm">
+        <input type="date" class="form-control border-0 bg-transparent form-control-sm" [(ngModel)]="fechaFin">
       </div>
     </div>
 
@@ -37,14 +38,19 @@
               <td class="py-3">{{ pedido.tipo }}</td>
               <td class="py-3 fw-bold">${{ pedido.total | number:'1.2-2' }}</td>
               <td class="py-3">
-                <span class="badge rounded-pill px-3 py-2"
-                      [ngClass]="{
-                        'bg-success text-white': pedido.estado === 'COMPLETADA',
-                        'bg-danger text-white': pedido.estado === 'CANCELADA',
-                        'bg-warning text-dark': pedido.estado !== 'COMPLETADA' && pedido.estado !== 'CANCELADA'
-                      }">
-                  {{ pedido.estado }}
-                </span>
+                <select class="form-select form-select-sm fw-bold rounded-pill text-center shadow-none border-0 mx-auto"
+                        style="width: 140px; cursor: pointer;"
+                        [ngClass]="{
+                          'bg-success text-white': pedido.estado === 'COMPLETADA',
+                          'bg-danger text-white': pedido.estado === 'CANCELADA',
+                          'bg-warning text-dark': pedido.estado === 'PENDIENTE'
+                        }"
+                        [ngModel]="pedido.estado"
+                        (ngModelChange)="cambiarEstado(pedido, $event)">
+                  <option value="PENDIENTE" class="bg-white text-dark">PENDIENTE</option>
+                  <option value="COMPLETADA" class="bg-white text-dark">COMPLETADA</option>
+                  <option value="CANCELADA" class="bg-white text-dark">CANCELADA</option>
+                </select>
               </td>
               <td class="py-3">
                 <button class="btn btn-sm btn-link text-dark" (click)="verDetalle(pedido.id)">
@@ -62,40 +68,48 @@
     </div>
   </div>
 
-  <div class="col-lg-3 border-start px-lg-4 mt-4 mt-lg-0">
-    <div class="bg-white p-4 rounded-4 shadow-sm h-100">
-      <h6 class="fw-bold mb-4 text-uppercase">Filtros</h6>
-      
-      <div class="mb-4">
-        <label class="form-label fw-semibold small text-muted">CATEGORÍA</label>
-        <select class="form-select bg-light border-0 py-2">
-          <option value="">Todas</option>
-          <option *ngFor="let cat of categorias" [value]="cat.id">
-            {{ cat.nombre }}
-          </option>
-        </select>
-      </div>
+ <div class="col-lg-3 border-start px-lg-4 mt-4 mt-lg-0">
+  <div class="bg-white p-4 rounded-4 shadow-sm">
+    <h6 class="fw-bold mb-4 text-uppercase">Filtros</h6>
+    
+    <div class="mb-4">
+      <label class="form-label fw-semibold small text-muted">ESTADO</label>
+      <select class="form-select bg-light border-0 py-2" [(ngModel)]="filtroEstado">
+        <option value="">Todos</option>
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="COMPLETADA">Completado</option>
+        <option value="CANCELADA">Cancelado</option>
+      </select>
+    </div>
 
-      <div class="mb-4">
-        <label class="form-label fw-semibold small text-muted">FECHA</label>
-        <input type="date" class="form-control bg-light border-0 py-2">
-      </div>
+    <div class="mb-4">
+      <label class="form-label fw-semibold small text-muted">FECHA</label>
+      <input type="date" class="form-control bg-light border-0 py-2" [(ngModel)]="filtroFecha">
+    </div>
 
-      <div class="mb-4">
-        <label class="form-label fw-semibold small text-muted">CAJERO</label>
-        <select class="form-select bg-light border-0 py-2">
-          <option>Todos</option>
-        </select>
-      </div>
+    <div class="mb-4">
+      <label class="form-label fw-semibold small text-muted">CAJERO</label>
+      <select class="form-select bg-light border-0 py-2" [(ngModel)]="filtroCajero">
+        <option value="">Todos</option>
+        @for (cajero of cajerosUnicos; track cajero) {
+          <option [value]="cajero">{{ cajero }}</option>
+        }
+      </select>
+    </div>
 
-      <div class="mb-4">
-        <label class="form-label fw-semibold small text-muted">TIPO DE ÓRDEN</label>
-        <select class="form-select bg-light border-0 py-2">
-          <option>Todos</option>
-          <option>Local</option>
-          <option>Para llevar</option>
-        </select>
-      </div>
+    <div class="mb-4">
+      <label class="form-label fw-semibold small text-muted">TIPO DE ÓRDEN</label>
+      <select class="form-select bg-light border-0 py-2" [(ngModel)]="filtroTipo">
+        <option value="">Todos</option>
+        <option value="Local">Local</option>
+        <option value="Para llevar">Para llevar</option>
+      </select>
+    </div>
+
+    <div class="mt-4 pt-3 border-top">
+      <button class="btn btn-outline-secondary w-100 rounded-3 fw-bold py-2" (click)="limpiarFiltros()">
+        <i class="bi bi-eraser me-2"></i>Limpiar Filtros
+      </button>
     </div>
   </div>
 </div>
